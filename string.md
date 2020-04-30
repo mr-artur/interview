@@ -2,10 +2,10 @@
 + [Класс ```String```](#Класс-String)
 + [Создание строки](#Создание-строки)
 + [Методы String](#Методы-String)
-+ [Для чего сделано, что строка неизменная и финализированная в Java?](#Для-чего-сделано-что-строка-неизменная-и-финализировання-в-Java)
++ [Для чего сделано, что строка неизменная и финализированная в Java?](#Для-чего-сделано-что-строка-неизменная-и-финализированная-в-Java)
 + [Почему ```char[]``` предпочтительнее ```String``` для хранения пароля?](#Почему-char-предпочтительнее-String-для-хранения-пароля)
 + [Пул строк](#Пул-строк)
-+ [Чем отличаются ```String```, ```StringBuffer``` и ```StringBuilder```?](#Чем-отличаются-String-StringBuffer-StringBuilder)
++ [Чем отличаются ```String```, ```StringBuffer``` и ```StringBuilder```?](#Чем-отличаются-String-StringBuffer-и-StringBuilder)
 
 ## Класс ```String```
 _String_ - это класс в Java для представления текстовых неизменяемых строк. 
@@ -58,99 +58,99 @@ something.setValue("string" + 2);
 
 ##### 1. ```charAt(int index) -> char```
 Возвращает символ по указанному индексу.
-##### 2 ```compareTo(Object o) -> int```
+##### 2. ```compareTo(Object o) -> int```
 Сравнивает данную строку с другим объектом.
-##### 3 ```compareTo(String anotherString) -> int```
+##### 3. ```compareTo(String anotherString) -> int```
 Сравнивает две строки лексически.
-##### 4 ```compareToIgnoreCase(String str) -> int```
+##### 4. ```compareToIgnoreCase(String str) -> int```
 Сравнивает две строки лексически, игнорируя регистр букв.
-##### 5 ```concat(String str) -> String```
+##### 5. ```concat(String str) -> String```
 Объединяет указанную строку с данной строкой, путем добавления ее в конце.
-##### 6 ```contains(String str) -> boolean```
+##### 6. ```contains(String str) -> boolean```
 Проверяет, содержит ли данная строка указанную подстроку.
-##### 7 ```contentEquals(StringBuffer sb) -> boolean```
+##### 7. ```contentEquals(StringBuffer sb) -> boolean```
 Возвращает значение true только в том случае, если эта строка представляет собой ту же последовательность символов как указанно в буфере строки (StringBuffer).
-##### 8 ```static copyValueOf(char[] data) -> String```
+##### 8. ```static copyValueOf(char[] data) -> String```
 Возвращает строку, которая представляет собой последовательность символов, в указанный массив.
-##### 9 ```static copyValueOf(char[] data, int offset, int count) -> String```
+##### 9. ```static copyValueOf(char[] data, int offset, int count) -> String```
 Возвращает строку, которая представляет собой последовательность символов, в указанный массив.
-##### 10 ```endsWith(String suffix) -> boolean```
+##### 10. ```endsWith(String suffix) -> boolean```
 Проверяет заканчивается ли эта строка указанным окончанием.
-##### 11 ```equals(Object anObject) -> boolean```
+##### 11. ```equals(Object anObject) -> boolean```
 Сравнивает данную строку с указанным объектом.
-##### 12 ```equalsIgnoreCase(String anotherString) -> boolean```
+##### 12. ```equalsIgnoreCase(String anotherString) -> boolean```
 Сравнивает данную строку с другой строкой, игнорируя регистр букв.
-##### 13 ```getBytes() -> byte[]```
+##### 13. ```getBytes() -> byte[]```
 Кодирует эту строку в последовательность байтов с помощью платформы charset, сохраняя результат в новый массив байтов.
-##### 14 ```getBytes(String charsetName) -> byte[]```
+##### 14. ```getBytes(String charsetName) -> byte[]```
 Кодирует эту строку в последовательность байтов с помощью платформы charset, сохраняя результат в новый массив байтов.
-##### 15 ```getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin) -> void```
+##### 15. ```getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin) -> void```
 Копирует символы из этой строки в массив символов назначения.
-##### 16 ```hashCode() -> int```
+##### 16. ```hashCode() -> int```
 Возвращает хэш-код для этой строки.
 ##### 17. ```isEmpty() -> boolean```
 Проверят, равна ли длина массива символов внутри строки нулю.
-##### 18 ```indexOf(int ch) -> int```
+##### 18. ```indexOf(int ch) -> int```
 Возвращает индекс первого вхождения указанного символа в данной строке.
-##### 19 ```indexOf(int ch, int fromIndex) -> int```
+##### 19. ```indexOf(int ch, int fromIndex) -> int```
 Возвращает индекс первого вхождения указанного символа в данной строке, начиная поиск с указанного индекса.
-##### 20 ```indexOf(String str) -> int```
+##### 20. ```indexOf(String str) -> int```
 Возвращает индекс первого вхождения указанной подстроки в данной строке.
-##### 21 ```indexOf(String str, int fromIndex) -> int```
+##### 21. ```indexOf(String str, int fromIndex) -> int```
 Возвращает индекс первого вхождения указанной подстроки в данной строке, начиная с указанного индекса.
-##### 22 ```intern() -> String```
+##### 22. ```intern() -> String```
 Запрашивает, есть ли такая строка в стринг пуле. Если есть, возвращает ссылку на нее. Есть нет, добавляет ее в стринг пул и возвращает ссылку на нее.
-##### 23 ```lastIndexOf(int ch) -> int```
+##### 23. ```lastIndexOf(int ch) -> int```
 Возвращает индекс последнего вхождения указанного символа в этой строке.
-##### 24 ```lastIndexOf(int ch, int fromIndex) -> int```
+##### 24. ```lastIndexOf(int ch, int fromIndex) -> int```
 Возвращает индекс последнего вхождения указанного символа в этой строке, начиная обратный поиск с указанного индекса.
-##### 25 ```lastIndexOf(String str) -> int```
+##### 25. ```lastIndexOf(String str) -> int```
 Возвращает индекс последнего вхождения указанной подстроки в данной строке.
-##### 26 ```lastIndexOf(String str, int fromIndex) -> int```
+##### 26. ```lastIndexOf(String str, int fromIndex) -> int```
 Возвращает индекс последнего вхождения указанной подстроки в этой строке, начиная обратный поиск с указанного индекса.
-##### 27 ```length() -> int```
+##### 27. ```length() -> int```
 Возвращает длину строки.
-##### 28 ```matches(String regex) -> boolean```
+##### 28. ```matches(String regex) -> boolean```
 Сообщает, соответствует ли или нет эта строка заданному регулярному выражению.
-##### 29 ```regionMatches(boolean ignoreCase, int toffset, String other, int ooffset, int len) -> boolean```
+##### 29. ```regionMatches(boolean ignoreCase, int toffset, String other, int ooffset, int len) -> boolean```
 Проверяет равны ли две области строки.
-##### 30 ```regionMatches(int toffset, String other, int ooffset, int len) -> boolean```
+##### 30. ```regionMatches(int toffset, String other, int ooffset, int len) -> boolean```
 Проверяет равны ли две области строки.
-##### 31 ```replace(char oldChar, char newChar) -> String```
+##### 31. ```replace(char oldChar, char newChar) -> String```
 Возвращает новую строку, в результате, заменив все вхождения oldChar в этой строке на newChar.
-##### 32 ```replaceAll(String regex, String replacement) -> String```
+##### 32. ```replaceAll(String regex, String replacement) -> String```
 Заменяет каждую подстроку строки, соответствующей заданному регулярному выражению с данной заменой.
-##### 33 ```replaceFirst(String regex, String replacement) -> String```
+##### 33. ```replaceFirst(String regex, String replacement) -> String```
 Заменяет перую подстроку данной строки, которая соответствует заданному регулярному выражению с данной заменой.
-##### 34 ```split(String regex) -> String[]```
+##### 34. ```split(String regex) -> String[]```
 Разделяет эту строку по данному регулярному выражению.
-##### 35 ```split(String regex, int limit) -> String[]```
+##### 35. ```split(String regex, int limit) -> String[]```
 Разделяет эту строку по данному регулярному выражению.
-##### 36 ```startsWith(String prefix) -> boolean```
+##### 36. ```startsWith(String prefix) -> boolean```
 Проверяет, начинается ли эта строка с заданного префикса.
-##### 37 ```startsWith(String prefix, int toffset) -> boolean```
+##### 37. ```startsWith(String prefix, int toffset) -> boolean```
 Проверяет, начинается ли эта строка с указанного префикса, начиная с указанного индекса.
-##### 38 ```subSequence(int beginIndex, int endIndex) -> CharSequence```
+##### 38. ```subSequence(int beginIndex, int endIndex) -> CharSequence```
 Возвращает новую последовательность символов, которая является подпоследовательностью этой последовательности.
-##### 39 ```substring(int beginIndex) -> String```
+##### 39. ```substring(int beginIndex) -> String```
 Возвращает новую строку, которая является подстрокой данной строки.
-##### 40 ```substring(int beginIndex, int endIndex) -> String```
+##### 40. ```substring(int beginIndex, int endIndex) -> String```
 Возвращает новую строку, которая является подстрокой данной строки.
-##### 41 ```toCharArray() -> char[]```
+##### 41. ```toCharArray() -> char[]```
 Преобразует эту строку в новый массив символов.
-##### 42 ```toLowerCase() -> String```
+##### 42. ```toLowerCase() -> String```
 Преобразует все символы в данной строке в нижний регистр, используя правила данного языкового стандарта.
-##### 43 ```toLowerCase(Locale locale) -> String```
+##### 43. ```toLowerCase(Locale locale) -> String```
 Преобразует все знаки в данной строке в нижний регистр, используя правила данного языкового стандарта.
-##### 44 ```toString() -> String```
+##### 44. ```toString() -> String```
 Этот объект (который уже является строкой!) возвращает себя.
-##### 45 ```toUpperCase() -> String```
+##### 45. ```toUpperCase() -> String```
 Преобразует все символы в строке в верхний регистр, используя правила данного языкового стандарта.
-##### 46 ```toUpperCase(Locale locale) -> String```
+##### 46. ```toUpperCase(Locale locale) -> String```
 Преобразует все символы в строке в верхний регистр, используя правила данного языкового стандарта.
-##### 47 ```trim() -> String```
+##### 47. ```trim() -> String```
 Возвращает копию строки с пропущенными начальными и конечными пробелами.
-##### 48 ```static valueOf(primitive data type x) -> String```
+##### 48. ```static valueOf(primitive data type x) -> String```
 Возвращает строковое представление переданного типа данных аргумента.
 
 [к оглавлению](#Строки-в-Java)
