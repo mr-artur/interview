@@ -129,13 +129,13 @@ while (iter.hasNext()) {
     System.out.println(entry.getKey() + " = " + entry.getValue());
 }
 ```
-##### 2. цикл for in
+##### 2. Цикл foreach
 ```java
 for (Map.Entry<String, String> entry: map.entrySet()) {
     System.out.println(entry.getKey() + " = " + entry.getValue());
 }
 ```
-##### 2. С помощью Stream API
+##### 2. Stream API
 ```java
 map.entrySet().stream().forEach(System.out::println);
 map.entrySet().forEach(System.out::println);
@@ -145,7 +145,7 @@ map.entrySet().forEach(System.out::println);
 
 ## `LinkedHashMap`
 + `LinkedHashMap` является симбиозом `HashMap` и `LinkedList`. Сам класс наследуется от `HashMap` и имплементирует интерфейс `Map`.
-+ Внутри `LinkedHashMap` работает с объектами типа `Entry`, который наследуется от `HashMap.Node`. То есть `Entry` также содержит поля `hash`, `key`, `value`, `next`, но при этом в него еще добавились поля `Entry<K,V> before` и `Entry<K,V> after`, в которые будут устанавливаться ссылки на предыдущий и следующий добавленный / обновленный элемент(в зависимости от конфигурации).
++ Внутри `LinkedHashMap` работает с объектами типа `Entry`, который наследуется от `HashMap.Node`. То есть `Entry` также содержит поля `hash`, `key`, `value`, `next`, но при этом в него еще добавились поля `Entry<K,V> before` и `Entry<K,V> after`, в которые будут устанавливаться ссылки на предыдущий и следующий добавленный элемент или тот, к которому осуществлялся доступ до или перед данным элементом(в зависимости от конфигурации).
 + Объект `LinkedHashMap` содержит те же свойства что и объект `HashMap` - т.е., `table`, `loadFactor`, `threshold`, `size`, `entrySet` и т.п., но к ним добавились еще 3 новых поля :
     + `head` - ссылка на самый старый элемент (голову списка) в `LinkedHashMap`
     + `tail` - ссылка на самый новый элемент (хвост списка) в `LinkedHashMap`
@@ -155,6 +155,7 @@ map.entrySet().forEach(System.out::println);
 + Время выполнения операций `add()`, `contains()`, `remove()` остается константой __O(1)__, как и в `HashMap`.  
 + По-другому (не как в `HashMap`) реализован метод `containsValue()`, который работает с помощью итерации начиная с `head` по ссылкам `after`.
 + Не синхронизирован
++ `LinkedHashMap` возвращается из метода `readValue("some_string", Map.class)` класса `ObjectMapper` из `jackson`. 
 
 [к оглавлению](#Java-Collections-Framework)
 
