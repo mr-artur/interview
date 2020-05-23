@@ -533,6 +533,7 @@ for (String str : list) {
     + `NullPointerException`, если переданный объект `null`.
     + `ClassCastException`, если тип передаваемого объекта не позволяет ему быть сравнимым с данным объектом.
 + Объекты, которые реализуют данный интерфейс, могут быть ключами в любой реализации `SortedMap` или значениями в любой реализации `SortedSet`, без указания в ней объекта `Comparator`.
++ Нарушает принцип _Single Responsibility_.
 
 [к оглавлению](#Java-Collections-Framework)
 
