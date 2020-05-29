@@ -48,6 +48,12 @@
 + [`VIEW`](#VIEW)
     + [Синтаксис оператора `CREATE VIEW`](#Синтаксис-оператора-CREATE-VIEW)
     + [Пример использования оператора `CREATE VIEW`](#Пример-использования-оператора-CREATE-VIEW)
++ [`PRIMARY KEY`](#PRIMARY-KEY)
+    + [Синтаксис оператора `PRIMARY KEY`](#Синтаксис-оператора-PRIMARY-KEY)
+    + [Пример использования оператора `PRIMARY KEY`](#Пример-использования-оператора-PRIMARY-KEY)
++ [`FOREIGN KEY`](#FOREIGN-KEY)
+    + [Синтаксис оператора `FOREIGN KEY`](#Синтаксис-оператора-FOREIGN-KEY)
+    + [Пример использования оператора `FOREIGN KEY`](#Пример-использования-оператора-FOREIGN-KEY)
     
 ## Что такое _SQL_?
 _SQL_ (Structured Query Language) - это язык структурированных запросов, который используется для управления реляционными базами данных и данными в них.
@@ -968,5 +974,123 @@ Saturn	|—
 Neptune	|1846
 Mercury	|1631
 Venus	|1610
+
+[к оглавлению](#SQL)
+
+## `PRIMARY KEY`
+Оператор `PRIMARY KEY` - это параметр, который устанавливается для однозначной идентификации записей в таблице. Значения `PRIMARY KEY` должны быть всегда уникальны, а также не содержать `NULL` значения.
+
+Любая таблица _обязана_ иметь первичный ключ, по которому можно однозначно идентифицировать записи в ней.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `PRIMARY KEY`
+Оператор `PRIMARY KEY` имеет такой синтаксис :
+
+Для MySQL :
+```sql
+CREATE TABLE table_name (
+    Id int NOT NULL,
+    PRIMARY KEY (Id)
+)
+```
+Для MS SQL Server, Oracle, MS Access :
+```sql
+CREATE TABLE table_name (
+    Id int NOT NULL PRIMARY KEY
+)
+```
+
+[к оглавлению](#SQL)
+
+#### Пример использования оператора `PRIMARY KEY`
+__Задание__. Создать таблицу `Planets` с первичным ключом ID.
+Решение для `MySQL` :
+```sql
+CREATE TABLE Planets (
+    ID int,
+    PlanetName varchar(10),
+    Radius float (10),
+    SunSeason float(10),
+    OpeningYear int,
+    HavingRings bit,
+    Opener varchar(30),
+    PRIMARY KEY (ID)
+)
+```
+Решение для MS SQL Server, Oracle, MS Access (Для MySQL оно на самом деле тоже подходит) :
+```sql
+CREATE TABLE Planets (
+    ID int PRIMARY KEY,
+    PlanetName varchar(10),
+    Radius float (10),
+    SunSeason float(10),
+    OpeningYear int,
+    HavingRings bit,
+    Opener varchar(30)
+)
+```
+
+[к оглавлению](#SQL)
+
+## `FOREIGN KEY`
+Оператор `FOREIGN KEY` служит для указания в одной таблице на первичный ключ из другой таблицы.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `FOREIGN KEY`
+Оператор `FOREIGN KEY` имеет такой синтаксис :
+
+Для MySQL :
+```sql
+CREATE TABLE table_1 (
+    ID_1 int,
+    ID_2 int,
+    PRIMARY KEY (ID_1),
+    FOREIGN KEY (ID_2) REFERENCES table_2(ID_2)
+)
+```
+Для MS SQL Server, Oracle, MS Access :
+```sql
+CREATE TABLE table_1 (
+    ID_1 int NOT NULL PRIMARY KEY,
+    ID_2 int FOREIGN KEY REFERENCES table_2(ID_2)
+)
+```
+
+[к оглавлению](#SQL)
+
+#### Пример использования оператора `FOREIGN KEY`
+__Задание__. Создать две таблицы, первая - `Authors`, содержащая 2 столбца, `AuthorID` и `AuthorName`, где `AuthorID` будет первичным ключом. Вторая таблица называется `Books` и содержит поля `BookID`, которое является вторичным ключом, ссылающимся на `Authors.AuthorID` и `BookName`.
+```sql
+CREATE TABLE Authors (
+    AuthorID int AUTO_INCREMENT PRIMARY KEY,
+    AuthorName varchar(30)
+);
+
+CREATE TABLE Books (
+    BookID int,
+    BookName varchar(30),
+    FOREIGN KEY (BookID) REFERENCES Authors(AuthorID)
+)
+```
+В результате выполнения этих двух запросов и добавления записей таблицы будут выглядеть вот так :
+
+`Authors` : 
+
+AuthorID	|AuthorName
+|:---:|:---:|
+1	|Bruce Eckel
+2	|Robert Lafore
+3	|Andrew Tanenbaum
+
+`Books` : 
+
+BookID	|BookName
+|:---:|:---:|
+3	|Modern Operating System
+2	|Object-Oriented Programming in C++
+1	|Thinking in Java
+3	|Computer Architecture
 
 [к оглавлению](#SQL)
