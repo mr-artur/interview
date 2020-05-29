@@ -30,8 +30,8 @@ _SQL_ состоит из `4`-х частей :
     + `ALTER` (Изменение) ([_перейти_](#ALTER-TABLE))
     + `DROP` (Удаление) ([_перейти_](#DROP))
 + __DML__ (Data Manipulation Language) - это работа со строками и колонками. В нее входят такие операторы как :
-    + `INSERT`
-    + `SELECT`
+    + `INSERT` ([_перейти_](#INSERT))
+    + `SELECT` ([_перейти_](#SELECT))
     + `UPDATE`
     + `DELETE`
 + __DCL__ (Data Control Language) - это работа с правами. В нее входят такие операторы как :
