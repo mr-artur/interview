@@ -57,6 +57,9 @@
 + [`UNION`](#UNION) ([_синтаксис_](#Синтаксис-оператора-UNION)) ([_пример_](#Пример-использования-оператора-UNION))  
 + [`LIMIT`](#LIMIT) ([_синтаксис_](#Синтаксис-оператора-LIMIT)) ([_примеры_](#Примеры-использования-оператора-LIMIT))    
 + [`IN`](#IN) ([_синтаксис_](#Синтаксис-оператора-IN)) ([_пример_](#Пример-использования-оператора-IN))     
++ [`TRUNCATE`](#TRUNCATE) ([_синтаксис_](#Синтаксис-оператора-TRUNCATE)) ([_пример_](#Пример-использования-оператора-TRUNCATE)) 
++ [`NOT`](#NOT) ([_синтаксис_](#Синтаксис-оператора-NOT)) ([_примеры_](#Примеры-использования-оператора-NOT)) 
++ [`AS`](#AS) ([_синтаксис_](#Синтаксис-оператора-AS)) ([_пример_](#Пример-использования-оператора-AS)) 
 
 ## Что такое _SQL_?
 _SQL_ (Structured Query Language) - это язык структурированных запросов, который используется для управления реляционными базами данных и данными в них.
@@ -1261,3 +1264,154 @@ ID	|UniversityName	|Students	|Faculties	|Professores	|Location	|Site
 3	|Novosibirsk State University	|7200	|13	|1527	|Novosibirsk	|nsu.ru
 
 [к оглавлению](#SQL)
+
+## `TRUNCATE`
+Оператор `TRUNCATE` служит для очистки таблицы от всех данных. Он аналогичен оператору `WHERE`, применяемому без оператора `WHERE`, но имеет такие основные отличия :
++ Оператор `TRUNCATE` не ведет запись об удаленных данных в журнал событий.
++ `DELETE` осуществляет блокировку построчно, а `TRUNCATE` - по всей странице целиком. Вследствие этого `TRUNCATE` не возвращает никакого значения, а `DELETE` возвращает количество удаленных строк.
++ После применения `DELETE` возможно сделать откат операции и восстановить удаленные данные (с помощью команды `ROLLBACK`). При применении оператора `TRUNCATE` этого сделать нельзя, однако этот оператор может применяться в тразакциях в том же MS SQL Server.
++ Как правило, реализация `TRUNCATE` отличается для каждый СУБД, поэтому информацию по его работе нужно искать в соответствующих документациях.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `TRUNCATE`
+Оператор `TRUNCATE` имеет такой синтаксис :
+```sql
+TRUNCATE TABLE table_name
+```
+
+[к оглавлению](#SQL)
+
+#### Пример использования оператора `TRUNCATE`
+Имеется следующая таблица `Artists` :
+
+|Singer	|Album	|Year	|Sale|
+|:----:|:---:|:---:|:---:|
+|The Prodigy	|Invaders Must Die	|2008	|1200000|
+|Drowning Pool	|Sinner	|2001	|400000|
+|Massive Attack	|Mezzanine	|1998	|2300000|
+|The Prodigy	|Fat of the Land	|1997	|600000|
+|The Prodigy	|Music For The Jilted Generation	|1994	|1500000|
+|Massive Attack	|100th Window	|2003	|1200000|
+|Drowning Pool	|Full Circle	|2007	|800000|
+|Massive Attack	|Danny The Dog	|2004	|1900000|
+|Drowning Pool	|Resilience	|2013	|500000|
+
+__Задание__. Удалить все данные из таблицы.
+```sql
+TRUNCATE TABLE Artists
+```
+Как было сказано выше, аналогичную задачу можно решить и с использованием оператора `DELETE` без оператора `WHERE`.
+```sql
+DELETE FROM Artists
+```
+
+[к оглавлению](#SQL)
+
+## `NOT`
+Оператор `NOT` служит для задания противоположного условия. Является эквивалентом операции инверсии в математической логики и может применяться только к булевым значениям.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `NOT`
+Оператор `NOT` имеет такой синтаксис :
+```sql
+[ NOT ] boolean_expression
+```
+
+[к оглавлению](#SQL)
+
+#### Примеры использования оператора `NOT`
+Имеется следующая таблица `Artists` :
+
+|Singer	|Album	|Year	|Sale|
+|:----:|:---:|:---:|:---:|
+|The Prodigy	|Invaders Must Die	|2008	|1200000|
+|Drowning Pool	|Sinner	|2001	|400000|
+|Massive Attack	|Mezzanine	|1998	|2300000|
+|The Prodigy	|Fat of the Land	|1997	|600000|
+|The Prodigy	|Music For The Jilted Generation	|1994	|1500000|
+|Massive Attack	|100th Window	|2003	|1200000|
+|Drowning Pool	|Full Circle	|2007	|800000|
+|Massive Attack	|Danny The Dog	|2004	|1900000|
+|Drowning Pool	|Resilience	|2013	|500000|
+
+__Пример 1__. Вывести записи таблицы, в которых исполнитель не `Drowning Pool` и не `Massive Attack`.
+```sql
+SELECT *
+FROM Artists
+WHERE Singer NOT IN ('Drowning Pool', 'Massive Attack')
+```
+Результат :
+
+Singer	|Album	|Year	|Sale
+|:----:|:---:|:---:|:---:|
+The Prodigy	|Invaders Must Die|	2008	|1200000
+The Prodigy	|Fat of the Land|	1997|	600000
+The Prodigy|	Music For The Jilted Generation|	1994|	1500000
+
+Очевидно, что в данной ситуации можно было бы написать и так для получения того же результата :
+```sql
+SELECT *
+FROM Artists
+WHERE Singer = 'The Prodigy'
+```
+Но если бы в таблице было много других записей, то этот способ бы уже стал некорректным.
+
+Таким образом, оператор `NOT` подходит как нельзя лучше для получения выборки исключающих множеств.
+
+__Пример 2__. Вывести записи таблицы, в которых название альбома содержит одно слово.
+```sql
+SELECT *
+FROM Artists
+WHERE Album NOT LIKE '% %'
+```
+Результат :
+
+Singer	|Album	|Year|	Sale
+|:----:|:---:|:---:|:---:|
+Drowning Pool	|Sinner	|2001	|400000
+Massive Attack|	Mezzanine	|1998|	2300000
+Drowning Pool	|Resilience	|2013|	500000
+
+[к оглавлению](#SQL)
+
+## `AS`
+Оператор `AS` используется для переименования результирующих столбцов при выборке элементов.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `AS`
+Оператор `AS` имеет такой синтаксис :
+```sql
+SELECT column_name AS new_column_name FROM table_name
+```
+
+[к оглавлению](#SQL)
+
+#### Пример использования оператора `AS`
+
+Предположим, у нас есть таблица `Planets` :
+
+|ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener |
+|:----:|:---------:|:-----:|:---------:|:-------------:|:-------------:|:----:|
+|1	|Mars	|3396	|687	|1659	|No	|Christian Huygens|
+|2	|Saturn	|60268	|10759.22	|—	|Yes	|—|
+|3	|Neptune	|24764	|60190	|1846	|Yes	|John Couch Adams|
+|4	|Mercury	|2439	|115.88 |1631	|No	|Nicolaus Copernicus|
+|5	|Venus	|6051	|243	|1610	|No	|Galileo Galilei|
+
+__Задание__. Вывести среднее значение радиуса планет таблицы.
+```sql
+SELECT AVG(Radius) AS AverageRadius FROM Planets
+```
+Результат :
+
+AverageRadius|
+|:----:|
+19383,6|
+
+Результирующий столбец стал называться `AverageRadius`. Без использования оператора `AS`, столбец имел бы название `AVG(Radius)`, что смотрелось бы менее информативно.
+
+[к оглавлению](#SQL)
+
