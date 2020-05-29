@@ -60,6 +60,8 @@
 + [`TRUNCATE`](#TRUNCATE) ([_синтаксис_](#Синтаксис-оператора-TRUNCATE)) ([_пример_](#Пример-использования-оператора-TRUNCATE)) 
 + [`NOT`](#NOT) ([_синтаксис_](#Синтаксис-оператора-NOT)) ([_примеры_](#Примеры-использования-оператора-NOT)) 
 + [`AS`](#AS) ([_синтаксис_](#Синтаксис-оператора-AS)) ([_пример_](#Пример-использования-оператора-AS)) 
++ [`LIKE`](#LIKE) ([_синтаксис_](#Синтаксис-оператора-LIKE)) ([_примеры_](#Примеры-использования-оператора-LIKE)) 
++ [`BETWEEN`](#BETWEEN) ([_синтаксис_](#Синтаксис-оператора-BETWEEN)) ([_примеры_](#Примеры-использования-оператора-BETWEEN)) 
 
 ## Что такое _SQL_?
 _SQL_ (Structured Query Language) - это язык структурированных запросов, который используется для управления реляционными базами данных и данными в них.
@@ -1258,7 +1260,7 @@ OR Location = 'Perm'
 
 Результат :
 
-ID	|UniversityName	|Students	|Faculties	|Professores	|Location	|Site
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
 |:----:|:---:|:---:|:---:|:----:|:---:|:---:|
 1	|Perm State National Research University	|12400	|12	|1229	|Perm	|psu.ru
 3	|Novosibirsk State University	|7200	|13	|1527	|Novosibirsk	|nsu.ru
@@ -1415,3 +1417,165 @@ AverageRadius|
 
 [к оглавлению](#SQL)
 
+`LIKE`
+Оператор `LIKE` помогает задать шаблон в виде символьной строки.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `LIKE`
+Оператор `LIKE` имеет такой синтаксис :
+```sql
+expression [ NOT ] LIKE pattern
+```
+Тут `expression` - это любое символьное выражение, а `pattern` - это шаблон, по которому будет происходить проверка выражения `expression`. 
+
+Шаблон может в себя включать такие спецсимволы :
+
+Символ	|Описание	|Примеры
+|:----:|:---------:|:-----:|
+%	|Строка любой длины	|Пример 1
+_	|Любой одиночный символ	|Пример 2
+[]	|Диапазон или последовательность символов	|Пример 3
+[^]	 |Исключающий диапазон или последовательность символов	|Пример 4
+
+[к оглавлению](#SQL)
+
+#### Примеры использования оператора `LIKE`
+Имеется следующая таблица `Universities` :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400|	12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300|	24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4|	Moscow State University	|35100|	39	|14358	|Moscow	|msu.ru
+5	|Higher School of Economics	|20335	|12	|1615	|Moscow|	hse.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg|	urfu.ru
+7	|National Research Nuclear University	|8600	|10	|936	|Moscow|	mephi.ru
+
+__Пример 1__. Вывести записи университетов, имеющих в своем названии слово `State`.
+```sql
+SELECT *
+FROM Universities
+WHERE UniversityName LIKE '%State%'
+```
+Результат :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University|	12400	|12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300	|24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200	|13	|1527	|Novosibirsk	|nsu.ru
+4	|Moscow State University	|35100	|39	|14358	|Moscow	|msu.ru
+
+В этом примере, в качестве шаблона оператора `LIKE` послужил `%State%`. Исходя из условия задачи, слово `State` может стоять в названии где угодно, поэтому оно обрамлено символом `%`, обозначающим строку любой длины перед и после слова.
+
+__Пример 2__. Вывести записи университетов, доменное имя сайтов которых содержит 4 символа(за исключением `.ru`).
+```sql
+SELECT *
+FROM Universities
+WHERE Site LIKE '____.ru'
+```
+Результат :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+2	|Saint Petersburg State University	|21300	|24	|13126	|Saint-Petersburg	 |spbu.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg	|urfu.ru
+
+__Пример 3__. Вывести записи университетов, первая буква доменного имени сайта которых содержит буквы из диапазона `[k-o]`.
+```sql
+SELECT *
+FROM Universities
+WHERE Site LIKE '[k-o]%'
+```
+Результат :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4	|Moscow State University	|35100	|39	|14358	|Moscow	|msu.ru
+7	|National Research Nuclear University|	8600	|10	|936	|Moscow	|mephi.ru
+
+__Пример 4__. Вывести записи университетов, вторая буква названия города которых не входит в диапазон `[e-o]`.
+```sql
+SELECT *
+FROM Universities
+WHERE Location LIKE '_[^e-o]%'
+```
+Результат :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+2	|Saint Petersburg State University	|21300	|24	|13126	|Saint-Petersburg	 |spbu.ru
+
+[к оглавлению](#SQL)
+
+## `BETWEEN`
+Оператор `BETWEEN` задает диапазон для проверки условия.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `BETWEEN`
+Оператор `BETWEEN` имеет такой синтаксис :
+```sql
+test_expression [NOT] BETWEEN begin_expression AND end_expression
+```
+Значение переменных :
++ `test-expression` - задает объект для проверки по диапазону.
++ `begin-expression` - начальное значение диапазона.
++ `end-expression` - конечное значение диапазона.
+
+[к оглавлению](#SQL)
+
+#### Примеры использования оператора `BETWEEN`
+Имеется следующая таблица `Universities` :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400|	12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300|	24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4|	Moscow State University	|35100|	39	|14358	|Moscow	|msu.ru
+5	|Higher School of Economics	|20335	|12	|1615	|Moscow|	hse.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg|	urfu.ru
+7	|National Research Nuclear University	|8600	|10	|936	|Moscow|	mephi.ru
+
+__Пример 1__. Вывести записи тех университетов, число студентов в которых от 10000 до 30000.
+```sql
+SELECT *
+FROM Universities
+WHERE Students BETWEEN 10000 AND 30000
+```
+Результат :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400	|12	|1229	|Perm|	psu.ru
+2	|Saint Petersburg State University|	21300|	24	|13126|	Saint-Petersburg	| spbu.ru
+5	|Higher School of Economics	|20335	|12	|1615|	Moscow|	hse.ru
+
+Данный пример можно также записать и с помощью операторов сравнения + `WHERE`, код будет выглядеть так :
+```sql
+SELECT *
+FROM Universities
+WHERE Students >= 10000 AND Students <= 30000
+```
+
+__Пример 2__. Вывести записи университетов, число преподавателей в которых меньше 2000 или больше 14000.
+```sql
+SELECT *
+FROM Universities
+WHERE Professors NOT BETWEEN 2000 AND 14000
+```
+Результат :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University|	12400|	12	|1229|	Perm|	psu.ru
+3	|Novosibirsk State University|	7200|	13	|1527	|Novosibirsk	|nsu.ru
+4	|Moscow State University|	35100|	39	|14358|	Moscow	|msu.ru
+5	|Higher School of Economics|	20335	|12	|1615|	Moscow|	hse.ru
+7	|National Research Nuclear University|	8600|	10|	936|	Moscow	|mephi.ru
+
+[к оглавлению](#SQL)
