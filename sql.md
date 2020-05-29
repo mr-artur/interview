@@ -1,7 +1,6 @@
 ## SQL
 + [Что такое _SQL_?](#Что-такое-SQL)
 + [Из чего состоит _SQL_?](#Из-чего-состоит-SQL)
-
 ### Операторы
 + [`CREATE`](#CREATE) ([_синтаксис_](#Синтаксис-оператора-CREATE-TABLE)) ([_пример_](#Пример-использования-оператора-CREATE-TABLE))
 + [`ALTER TABLE`](#ALTER-TABLE) ([_синтаксис_](#Синтаксис-оператора-ALTER-TABLE)) ([_пример_](#Пример-использования-оператора-ALTER-TABLE))
@@ -28,6 +27,9 @@
 + [`AS`](#AS) ([_синтаксис_](#Синтаксис-оператора-AS)) ([_пример_](#Пример-использования-оператора-AS)) 
 + [`LIKE`](#LIKE) ([_синтаксис_](#Синтаксис-оператора-LIKE)) ([_примеры_](#Примеры-использования-оператора-LIKE)) 
 + [`BETWEEN`](#BETWEEN) ([_синтаксис_](#Синтаксис-оператора-BETWEEN)) ([_примеры_](#Примеры-использования-оператора-BETWEEN)) 
+### Функции
++ [`COUNT`](#COUNT) ([_синтаксис_](#Синтаксис-функции-COUNT)) ([_примеры_](#Примеры-использования-функции-COUNT)) 
++ [`AVG`](#AVG) ([_синтаксис_](#Синтаксис-функции-AVG)) ([_примеры_](#Примеры-использования-функции-AVG)) 
 
 ## Что такое _SQL_?
 _SQL_ (Structured Query Language) - это язык структурированных запросов, который используется для управления реляционными базами данных и данными в них.
@@ -1543,5 +1545,103 @@ ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
 4	|Moscow State University|	35100|	39	|14358|	Moscow	|msu.ru
 5	|Higher School of Economics|	20335	|12	|1615|	Moscow|	hse.ru
 7	|National Research Nuclear University|	8600|	10|	936|	Moscow	|mephi.ru
+
+[к оглавлению](#SQL)
+
+## `COUNT`
+Оператор `COUNT()` - это функция, которая возвращает количество записей (строк) в таблице. Запись функции с указанием столбца в качестве аргумента вернет количество записей конкретного столбца за исключением `NULL` записей.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис функции `COUNT`
+Функция `COUNT` имеет такой синтаксис :
+```sql
+COUNT(column_name)
+```
+Запись функции с указанием маски `*` вернет количество строк в таблице. Её синтаксис :
+```sql
+COUNT(*)
+```
+
+[к оглавлению](#SQL)
+
+#### Примеры использования функции `COUNT`
+Имеется следующая таблица `Universities` :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400|	12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300|	24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4|	Moscow State University	|35100|	39	|14358	|Moscow	|msu.ru
+5	|Higher School of Economics	|20335	|12	|1615	|Moscow|	hse.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg|	urfu.ru
+7	|National Research Nuclear University	|8600	|10	|936	|Moscow|	mephi.ru
+
+__Пример 1__. Вывести число записей таблицы.
+```sql
+SELECT COUNT(*) 
+FROM Universities
+```
+Вывод : `7`
+
+__Пример 2__. Найти количество университетов, расположенных в `Москве` :
+```sql
+SELECT COUNT(*)
+FROM Universities
+WHERE Location = 'Moscow'
+```
+Вывод : `3`
+
+__Пример 3__. Найти количество университетов с более чем `20` факультетами.
+```sql
+SELECT COUNT(*)
+FROM Universities
+WHERE Faculties > 20
+```
+Вывод : `2`
+
+[к оглавлению](#SQL)
+
+## `AVG`
+Оператор `AVG` - это функция, возвращающая среднее значения столбца. Важным является то, что она применима ТОЛЬКО для числовых стобцов.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис функции `AVG`
+Функция `AVG` имеет такой синтаксис :
+```sql
+AVG(column_name)
+```
+
+[к оглавлению](#SQL)
+
+#### Примеры использования функции `AVG`
+Имеется следующая таблица `Universities` :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400|	12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300|	24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4|	Moscow State University	|35100|	39	|14358	|Moscow	|msu.ru
+5	|Higher School of Economics	|20335	|12	|1615	|Moscow|	hse.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg|	urfu.ru
+7	|National Research Nuclear University	|8600	|10	|936	|Moscow|	mephi.ru
+
+__Пример 1__. Найти среднее число студентов всех университетов.
+```sql
+SELECT AVG(Students)
+FROM Universities
+```
+Вывод : `23133`
+
+__Пример 2__. Найти среднее число факультетов в университетах Москвы.
+```sql
+SELECT AVG(Faculties)
+FROM Universities
+WHERE Location = 'Moscow'
+```
+Вывод : `20`
 
 [к оглавлению](#SQL)
