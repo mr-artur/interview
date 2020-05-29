@@ -29,6 +29,12 @@
 + [`GROUP BY`](#GROUP-BY)
     + [Синтаксис оператора `GROUP BY`](#Синтаксис-оператора-GROUP-BY)
     + [Примеры использования оператора `GROUP BY`](#Примеры-использования-оператора-GROUP-BY)
++ [`HAVING`](#HAVING)
+    + [Синтаксис оператора `HAVING`](#Синтаксис-оператора-HAVING)
+    + [Примеры использования оператора `HAVING`](#Примеры-использования-оператора-HAVING)
++ [`ORDER BY`](#ORDER-BY)
+    + [Синтаксис оператора `ORDER BY`](#Синтаксис-оператора-ORDER-BY)
+    + [Примеры использования оператора `ORDER BY`](#Примеры-использования-оператора-ORDER-BY)
     
 ## Что такое _SQL_?
 _SQL_ (Structured Query Language) - это язык структурированных запросов, который используется для управления реляционными базами данных и данными в них.
@@ -603,5 +609,134 @@ GROUP BY Singer
 |Drowning Pool	|2013|
 |Massive Attack	|2004|
 |The Prodigy	|2008|
+
+[к оглавлению](#SQL)
+
+## `HAVING`
+Оператор `HAVING` является указателем на результат выполнения агрегатных функций. Агрегатная функция - это функция, возвращающая какое-то одно значение по набору значений столбца. Такими функциями являются `COUNT()`, `MIN()`, `MAX()`, `AVG()`, `SUM()`.
+
+Оператор `HAVING` аналогичен оператору `WHERE`, за исключением того, что применяется не для всего набора значений таблицы, а для набора созданного оператором `GROUP BY` и применяется строго после него.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `HAVING`
+Оператор `HAVING` имеет следующий синтаксис :
+```sql
+HAVING aggregate_function(column_name) operator value
+```
+
+[к оглавлению](#SQL)
+
+#### Примеры использования оператора `HAVING`
+Имеется следующая таблица `Artists` :
+
+|Singer	|Album	|Year	|Sale|
+|:----:|:---:|:---:|:---:|
+|The Prodigy	|Invaders Must Die	|2008	|1200000|
+|Drowning Pool	|Sinner	|2001	|400000|
+|Massive Attack	|Mezzanine	|1998	|2300000|
+|The Prodigy	|Fat of the Land	|1997	|600000|
+|The Prodigy	|Music For The Jilted Generation	|1994	|1500000|
+|Massive Attack	|100th Window	|2003	|1200000|
+|Drowning Pool	|Full Circle	|2007	|800000|
+|Massive Attack	|Danny The Dog	|2004	|1900000|
+|Drowning Pool	|Resilience	|2013	|500000|
+
+__Пример 1__. Вывести название исполнителей (`Singer`), число продаж альбомов (`Sale`) которого больше `2000000`.
+```sql
+SELECT Singer, SUM(SALE)
+FROM Artists
+GROUP BY Singer
+HAVING SUM(SALE) > 2000000
+```
+Результат :
+
+|Singer	|Sum(Sale)|
+|:---:|:---:|
+|Massive Attack	|54000000|
+|The Prodigy	|33000000|
+
+В результат не попала группа `Drowning Pool` из-за того, что число продаж их альбомов равно `1700000`.
+
+__Пример 2__. Вывести названия исполнителей, которые исполнялись еще до 1995 года.
+```sql
+SELECT Singer, MIN(Year)
+FROM Artists
+GROUP BY Singer
+HAVING MIN(YEAR) < 1995
+```
+Результат :
+
+|Singer	|MIN(Year)|
+|:---:|:---:|
+|The Prodigy	|1994|
+
+[к оглавлению](#SQL)
+
+## `ORDER BY`
+Оператор `ORDER BY` выполняет сортировку выходных строк. Этот оператор можно применять как к числовым столбцам, так и к строковым. В последнем случае, сортировка будет происходить по алфавиту.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `ORDER BY`
+Оператор `ORDER BY` имеет следующий синтаксис :
+```sql
+ORDER BY column_name [ASC | DESC]
+```
+Сортировка может происходить как по возрастанию, так и по убыванию значений :
++ Параметр `ASC` (по умолчанию) устанавливает порядок сортировки по возрастанию, от меньших значений к большим.
++ Параметр `DESC` устанавливает порядок сортировки по убыванию, от больших значений к меньшим.
+
+[к оглавлению](#SQL)
+
+#### Примеры использования оператора `ORDER BY`
+Имеется следующая таблица `Artists` :
+
+|Singer	|Album	|Year	|Sale|
+|:----:|:---:|:---:|:---:|
+|The Prodigy	|Invaders Must Die	|2008	|1200000|
+|Drowning Pool	|Sinner	|2001	|400000|
+|Massive Attack	|Mezzanine	|1998	|2300000|
+|The Prodigy	|Fat of the Land	|1997	|600000|
+|The Prodigy	|Music For The Jilted Generation	|1994	|1500000|
+|Massive Attack	|100th Window	|2003	|1200000|
+|Drowning Pool	|Full Circle	|2007	|800000|
+|Massive Attack	|Danny The Dog	|2004	|1900000|
+|Drowning Pool	|Resilience	|2013	|500000|
+
+__Пример 1__. Вывести все записи таблицы, упорядоченные по названию исполнителя.
+```sql
+SELECT *
+FROM Artists
+ORDER BY Singer
+```
+Результат :
+
+|Singer	|Album	|Year	|Sale|
+|:----:|:---:|:---:|:---:|
+|Drowning Pool	|Sinner	|2001	|400000|
+|Drowning Pool	|Full Circle	|2007	|800000|
+|Drowning Pool	|Resilience	|2013	|500000|
+|Massive Attack	|Mezzanine	|1998	|2300000|
+|Massive Attack	|100th Window	|2003	|1200000|
+|Massive Attack	|Danny The Dog	|2004	|1900000|
+|The Prodigy	|Invaders Must Die	|2008	|1200000|
+|The Prodigy	|Fat of the Land	|1997	|600000|
+|The Prodigy	|Music For The Jilted Generation	|1994	|1500000|
+
+__Пример 2__. Вывести названия исполнителя, альбома, год выпуска тех альбомов, которые выпущены после 2005 года, упорядоченные по убыванию года.
+```sql
+SELECT Singer, Album, Year
+FROM Artists
+WHERE Year > 2005
+ORDER BY Year DESC
+```
+Результат :
+
+Singer	|Album	|Year
+|:---:|:---:|:---:|
+Drowning Pool	|Resilience	|2013
+The Prodigy|	Invaders Must Die	|2008
+Drowning Pool	|Full Circle	|2007
 
 [к оглавлению](#SQL)
