@@ -35,6 +35,13 @@
 + [`ORDER BY`](#ORDER-BY)
     + [Синтаксис оператора `ORDER BY`](#Синтаксис-оператора-ORDER-BY)
     + [Примеры использования оператора `ORDER BY`](#Примеры-использования-оператора-ORDER-BY)
++ [`DISTINCT`](#DISTINCT)
+    + [Синтаксис оператора `DISTINCT`](#Синтаксис-оператора-DISTINCT)
+    + [Примеры использования оператора `DISTINCT`](#Примеры-использования-оператора-DISTINCT)
++ [`AND` и `OR`](#AND)
+    + [Синтаксис оператора `AND`](#Синтаксис-оператора-AND)
+    + [Синтаксис оператора `OR`](#Синтаксис-оператора-OR)
+    + [Примеры использования операторов `AND` и `OR`](#Примеры-использования-операторов-AND-и-OR)
     
 ## Что такое _SQL_?
 _SQL_ (Structured Query Language) - это язык структурированных запросов, который используется для управления реляционными базами данных и данными в них.
@@ -738,5 +745,137 @@ Singer	|Album	|Year
 Drowning Pool	|Resilience	|2013
 The Prodigy|	Invaders Must Die	|2008
 Drowning Pool	|Full Circle	|2007
+
+[к оглавлению](#SQL)
+
+## `DISTINCT`
+Оператор `DISTINCT` используется для того, чтобы указать, что мы работаем только с уникальными значениями столбца.
+
+Оператор `DISTINCT` нашел широкое применение в операторе `SELECT` для выборки уникальных значений. Так же он используется в агрегатных функциях.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `DISTINCT`
+Оператор `DISTINCT` имеет следующий синтаксис :
+```sql
+SELECT DISTINCT column_name FROM table_name
+```
+
+[к оглавлению](#SQL)
+
+#### Примеры использования оператора `ORDER BY`
+Имеется следующая таблица `Artists` :
+
+|Singer	|Album	|Year	|Sale|
+|:----:|:---:|:---:|:---:|
+|The Prodigy	|Invaders Must Die	|2008	|1200000|
+|Drowning Pool	|Sinner	|2001	|400000|
+|Massive Attack	|Mezzanine	|1998	|2300000|
+|The Prodigy	|Fat of the Land	|1997	|600000|
+|The Prodigy	|Music For The Jilted Generation	|1994	|1500000|
+|Massive Attack	|100th Window	|2003	|1200000|
+|Drowning Pool	|Full Circle	|2007	|800000|
+|Massive Attack	|Danny The Dog	|2004	|1900000|
+|Drowning Pool	|Resilience	|2013	|500000|
+
+__Пример 1__. Вывести, какие исполнители имеются в таблице.
+```sql
+SELECT DISTINCT Singer
+FROM Artists
+```
+Результат :
+
+|Singer|
+|:---:|
+|The Prodigy|
+|Drowning Pool|
+|Massive Attack|
+
+__Пример 2__. Вывести количество уникальных исполнителей в таблице.
+```sql
+SELECT COUNT(DISTINCT Singer) 
+AS SingersCount 
+FROM Artists
+```
+Результат :
+
+SingersCount|
+|:---:|
+3|
+
+[к оглавлению](#SQL)
+
+## `AND` и `OR`
+Операторы `AND` и `OR` - это предикаты языка SQL, служащие для построения логических выражений.
+
+В SQL предикатами называются операторы, возвращающие значения `TRUE` или `FALSE`.
+
+Предикат `AND` - эквивалент логичного умножения (конъюнкции).
+
+Предикат `OR` - эквивалент логического сложения (дизъюнкции).
+
+Таблица истинности для этих предикатов :
+
+first_expression	|last_expression	|AND	|OR
+|:----:|:---:|:---:|:---:|
+TRUE	|TRUE|	TRUE|	TRUE
+TRUE	|FALSE|	FALSE|	TRUE
+FALSE	|TRUE|	FALSE|	TRUE
+FALSE	|FALSE|	FALSE|  	FALSE
+
+Из таблицы видно, что для выполнения условия предиката `AND` должны выполняться оба условия, а для выполнения условия предиката `OR` должно выполняться хотя бы одно условие.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `AND`
+```sql
+boolean_expression AND boolean_expression
+```
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `OR`
+```sql
+boolean_expression OR boolean_expression
+```
+
+[к оглавлению](#SQL)
+
+#### Примеры использования операторов `AND` и `OR`
+Предположим, что имеется таблица `Planets` :
+
+ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1|	Mars	|3396	|687	|1659	|No	|Christian Huygens
+2	|Saturn	|60268	|10759.22	|—	|Yes	|—
+3|	Neptune	|24764	|60190	|1846	|Yes	|John Couch Adams
+4|	Mercury	|2439	|115.88	|1631	|No	|Nicolaus Copernicus
+5	|Venus	|6051	|243	|1610	|No	|Galileo Galilei
+
+__Пример 1__. Вывести записи планет, у которых радиус планеты меньше `10000` и открытых (`OpeningYear`) после `1620`.
+```sql
+SELECT * 
+FROM Planets
+WHERE Radius < 10000 AND OpeningYear > 1620
+```
+ID	|PlanetName|	Radius	|SunSeason	|OpeningYear	|HavingRings|	Opener
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Mars	|3396	|687	|1659	|No	|Christian Huygens
+4	|Mercury|	2439|	115.88	|1631	|No|	Nicolaus Copernicus
+
+__Пример 2__. Вывести записи планет, названия которых начинаются с буквы `N` или заканчиваются на букву `s` и не имеющие колец.
+```sql
+SELECT *
+FROM Planets
+WHERE (PlanetName LIKE 'N%' OR PlanetName LIKE '%s') AND HavingRings = 'No'
+```
+Результат :
+
+ID	|PlanetName|	Radius|	SunSeason|	OpeningYear	|HavingRings	|Opener
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Mars	|3396	|687	|1659	|No|	Christian Huygens
+5	|Venus	|6051	|243	|1610	|No	|Galileo Galilei
+
+В этом примере используется как предикат `AND`, так и предикат `OR`. В запросах их можно использовать сколько угодно раз (так же как и ограничивающие их скобки) для задания более точного условия выборки.
 
 [к оглавлению](#SQL)
