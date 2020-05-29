@@ -36,7 +36,9 @@
 + [`ROUND`](#ROUND) ([_синтаксис_](#Синтаксис-функции-ROUND)) ([_примеры_](#Примеры-использования-функции-ROUND)) 
 + [`UCASE`](#UCASE) ([_синтаксис_](#Синтаксис-функции-UCASE)) ([_примеры_](#Примеры-использования-функции-UCASE)) 
 + [`LCASE`](#LCASE) ([_синтаксис_](#Синтаксис-функции-LCASE)) ([_примеры_](#Примеры-использования-функции-LCASE)) 
-
++ [`LEN`](#LEN) ([_синтаксис_](#Синтаксис-функции-LEN)) ([_примеры_](#Примеры-использования-функции-LEN))
++ [`MID`](#MID) ([_синтаксис_](#Синтаксис-функции-MID)) ([_пример_](#Пример-использования-функции-MID))
++ [`NOW`](#NOW) ([_синтаксис_](#Синтаксис-функции-NOW)) ([_пример_](#Пример-использования-функции-NOW))
 
 ## Что такое _SQL_?
 _SQL_ (Structured Query Language) - это язык структурированных запросов, который используется для управления реляционными базами данных и данными в них.
@@ -1963,5 +1965,154 @@ Opener|
 |:----:|
 Nicolaus Copernicus|
 Galileo Galilei|
+
+[к оглавлению](#SQL)
+
+## `LEN`
+Оператор `LEN` - это функция, возвращающая длину значения в поле записи. Работает как для чисел, так и для строк.
+
+Функция `LEN` исключает конечные пробелы из подсчета.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис функции `LEN`
+Функция `LEN` имеет такой синтаксис :
+```sql
+LEN(column_name)
+```
+
+[к оглавлению](#SQL)
+
+#### Примеры использования функции `LEN`
+Предположим, у нас есть таблица `Planets` :
+
+|ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener |
+|:----:|:---------:|:-----:|:---------:|:-------------:|:-------------:|:----:|
+|1	|Mars	|3396	|687	|1659	|No	|Christian Huygens|
+|2	|Saturn	|60268	|10759.22	|—	|Yes	|—|
+|3	|Neptune	|24764	|60190	|1846	|Yes	|John Couch Adams|
+|4	|Mercury	|2439	|115.88 |1631	|No	|Nicolaus Copernicus|
+|5	|Venus	|6051	|243	|1610	|No	|Galileo Galilei|
+
+__Пример 1__. Вывести всех первооткрывателей планет и длины названий открытых ими планет.
+```sql
+SELECT Opener, LEN(PlanetName)
+FROM Planets
+```
+Результат :
+
+Opener	|LEN(PlanetName)
+|:-------------:|:----:|
+Christiaan Huygens|	4
+—	|6
+John Couch Adams|	7
+Nicolaus Copernicus|	7
+Galileo Galilei|	5
+
+__Пример 2__. Вывести разрядность числа радиуса и название планет имеющих кольца.
+```sql
+SELECT PlanetName, LEN(Radius)
+FROM Planets
+WHERE HavingRings = 'Yes'
+```
+Результат :
+
+PlanetName	|LEN(Radius)
+|:-------------:|:----:|
+Saturn	|6
+Neptune	|6
+
+[к оглавлению](#SQL)
+
+## `MID`
+Оператор `MID` - это функция, выводящая определенное количество символов текстового поля таблицы.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис функции `MID`
+Функция `MID` имеет такой синтаксис :
+```sql
+MID(colunm_name,start [,length])
+```
+Параметр `start` задает позицию начального символа.
+
+Параметр `length` устанавливает количество символов для вывода, начиная с позиции, указанной в параметре `start`.
+
+[к оглавлению](#SQL)
+
+#### Пример использования функции `MID`
+Имеется следующая таблица `Universities` :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400|	12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300|	24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4|	Moscow State University	|35100|	39	|14358	|Moscow	|msu.ru
+5	|Higher School of Economics	|20335	|12	|1615	|Moscow|	hse.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg|	urfu.ru
+7	|National Research Nuclear University	|8600	|10	|936	|Moscow|	mephi.ru
+
+__Задание__. Вывести первые `3` символа каждого из названий городов.
+```sql
+SELECT MID(Location, 1, 3)
+FROM Universities
+```
+Результат :
+
+Location|
+|:---:|
+Per|
+Sai|
+Nov|
+Mos|
+Mos|
+Yek|
+Mos|
+
+[к оглавлению](#SQL)
+
+## `NOW`
+Оператор `NOW` - это функция, возвращающая системные время и дату.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис функции `NOW`
+Функция `NOW` имеет такой синтаксис :
+```sql
+NOW()
+```
+
+[к оглавлению](#SQL)
+
+#### Пример использования функции `NOW`
+Имеется следующая таблица `Universities` :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400|	12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300|	24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4|	Moscow State University	|35100|	39	|14358	|Moscow	|msu.ru
+5	|Higher School of Economics	|20335	|12	|1615	|Moscow|	hse.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg|	urfu.ru
+7	|National Research Nuclear University	|8600	|10	|936	|Moscow|	mephi.ru
+
+__Задание__. Вывести сколько на текущее время обучается студентов в каждом университете, при этом чтобы было указано текущее время и дата.
+```sql
+SELECT UniversityName, Students, NOW() AS CurrentTime
+FROM Universities
+```
+Результат :
+
+UniversityName	|Students	|CurDate
+|:----:|:---:|:---:|
+Perm State National Research University	|12400	|6/26/2013 2:11:07 PM
+Saint Petersburg State University	|21300	|6/26/2013 2:11:07 PM
+Novosibirsk State University	|7200	|6/26/2013 2:11:07 PM
+Moscow State University	|35100	|6/26/2013 2:11:07 PM
+Higher School of Economics	|20335	|6/26/2013 2:11:07 PM
+Ural Federal University	|57000	|6/26/2013 2:11:07 PM
+National Research Nuclear University	|8600	|6/26/2013 2:11:07 PM
 
 [к оглавлению](#SQL)
