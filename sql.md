@@ -23,6 +23,12 @@
 + [`DELETE`](#DELETE)
     + [Синтаксис оператора `DELETE`](#Синтаксис-оператора-DELETE)
     + [Примеры использования оператора `DELETE`](#Примеры-использования-оператора-DELETE)
++ [`WHERE`](#WHERE)
+    + [Синтаксис оператора `WHERE`](#Синтаксис-оператора-WHERE)
+    + [Примеры использования оператора `WHERE`](#Примеры-использования-оператора-WHERE)
++ [`GROUP BY`](#GROUP-BY)
+    + [Синтаксис оператора `GROUP BY`](#Синтаксис-оператора-GROUP-BY)
+    + [Примеры использования оператора `GROUP BY`](#Примеры-использования-оператора-GROUP-BY)
     
 ## Что такое _SQL_?
 _SQL_ (Structured Query Language) - это язык структурированных запросов, который используется для управления реляционными базами данных и данными в них.
@@ -289,6 +295,7 @@ VALUES (4, "Venus", 6051, 243, 160, "No", "Galileo Galilei")
 ```sql
 SELECT * FROM Planets
 ```
+Получим :
 
 | ID	| PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener|
 |:-----:|:---:|:---:|:----:|:----:|:---:|:---:|
@@ -328,6 +335,8 @@ FROM PlanetsWithRings
 ```sql
 SELECT * FROM PlanetsWithoutRings
 ```
+Получим :
+
 |ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener|
 |:-----:|:---:|:---:|:----:|:----:|:---:|:---:|
 |1|	Mars	|3396	|687	|1659	|No	|Christiaan Huygens|
@@ -385,6 +394,7 @@ WHERE ID = 3
 SELECT * FROM Planets
 WHERE ID = 3
 ```
+Получим :
 
 |ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener|
 |:---:|:---:|:---:|:----:|:---:|:---:|:---:|
@@ -419,6 +429,7 @@ LIMIT 3
 ```sql
 SELECT TOP(3) * FROM Planets
 ```
+Получим :
 
 |ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener|
 |:---:|:---:|:---:|:----:|:---:|:---:|:---:|
@@ -473,5 +484,124 @@ __Пример 3__. Необходимо удалить запись из таб
 DELETE FROM Planets
 WHERE ID = 3
 ```
+
+[к оглавлению](#SQL)
+
+## `WHERE`
+Оператор `WHERE` служит для задания условий выборки, вставки, обновления и удаления записей. 
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `WHERE`
+Оператор `WHERE` имеет следующий синтаксис :
+```sql
+WHERE condition
+```
+Условие `condition` может в себя включать предикаты `ANR`, `OR`, `NOT`, `LIKE`, `BETWEEN`, `IS`, `IN`, ключевое слово `NULL`, а также операторы сравнения и равенства (например, `<`, `>`, `=`, `<>`).
+
+[к оглавлению](#SQL)
+
+#### Примеры использования оператора `WHERE`
+Имеется следующая таблица `Planets` :
+
+|ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener|
+|:---:|:---:|:---:|:----:|:---:|:---:|:---:|
+|1	|Mars	|3396	|687	|1659	|No	|Christian Huygens|
+|2	|Saturn	|60268	|10759.22	|—	|Yes	|—|
+|3	|Neptune	|24764	|60190	|1846	|Yes	|John Couch Adams|
+|4	|Mercury	|2439	|115.88|	1631	|No	|Nicolaus Copernicus|
+|5	|Venus	|6051	|243	|1610	|No	|Galileo Galilei|
+
+__Пример 1__. Вывести все записи, значение радиуса (`Radius`) которых находится в пределах от `3000` до `9000`.
+```sql
+SELECT * FROM Planets
+WHERE Radius BETWEEN 3000 AND 9000
+```
+Или методом глубой силы :
+```sql
+SELECT * FROM Planets
+WHERE Radius >= 3000 AND Radius <= 9000
+```
+Получим :
+
+|ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener|
+|:---:|:---:|:---:|:----:|:---:|:---:|:---:|
+|1	|Mars	|3396	|687	|1659	|No	|Christian Huygens|
+|5	|Venus	|6051	|243	|1610	|No	|Galileo Galilei|
+
+__Пример 2__. Вывести название планеты (`PlanetName`), год ее открытия (`OpeningYear`), имя первооткрывателя (`Opener`) планет, чье название не начинается и заканчивается на букву `s`.
+```sql
+SELECT PlanetName, OpeningYear, Opener 
+FROM Planets
+WHERE PlanetName NOT LIKE 's%'
+AND PlanetName NOT LIKE 'S%'
+```
+Получим :
+
+|PlanetName	|OpeningYear	|Opener|
+|:---:|:---:|:---:|
+|Neptune	|1846	|John Couch Adams|
+|Mercury	|1631	|Nicolaus Copernicus|
+
+[к оглавлению](#SQL)
+
+## `GROUP BY`
+Оператор `GROUP BY` используется для объединения строк выборки по одному или нескольким столбцам.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `GROUP BY`
+Оператор `GROUP BY` имеет следующий синтаксис :
+```sql
+GROUP BY column_name
+```
+С использованием оператора `GROUP BY` тесно связано использование агрегатных функций и оператора `HAVING`.
+
+[к оглавлению](#SQL)
+
+#### Примеры использования оператора `GROUP BY`
+Предположим, что имеется следующая таблица `Artists` :
+
+|Singer	|Album	|Year	|Sale|
+|:----:|:---:|:---:|:---:|
+|The Prodigy	|Invaders Must Die	|2008	|1200000|
+|Drowning Pool	|Sinner	|2001	|400000|
+|Massive Attack	|Mezzanine	|1998	|2300000|
+|The Prodigy	|Fat of the Land	|1997	|600000|
+|The Prodigy	|Music For The Jilted Generation	|1994	|1500000|
+|Massive Attack	|100th Window	|2003	|1200000|
+|Drowning Pool	|Full Circle	|2007	|800000|
+|Massive Attack	|Danny The Dog	|2004	|1900000|
+|Drowning Pool	|Resilience	|2013	|500000|
+
+__Пример 1__. Найти сумму продаж альбомов `Sale` всех исполнителей (`Singer`).
+```sql
+SELECT Singer, SUM(Sale) AS AllSales
+FROM Artists
+GROUP BY Singer
+```
+Результат :
+
+|Singer	|AllSales|
+|:---:|:---:|
+|Drowning Pool	|1700000|
+|Massive Attack	|5400000|
+|The Prodigy	|3300000|
+
+В данном запросе используется оператор `AS`, позволяющий создать новое имя столбца `AllSales` на выходе. В данном случае это необязательно, а сделано для большей информативности.
+
+__Пример 2__. Узнать в каком году был выпущен последний альбом каждой из групп.
+```sql
+SELECT Singer, MAX(Year) AS LatestAlbumYear
+FROM Artists
+GROUP BY Singer
+```
+Результат :
+
+|Singer	|LastAlbumYear|
+|:---:|:---:|
+|Drowning Pool	|2013|
+|Massive Attack	|2004|
+|The Prodigy	|2008|
 
 [к оглавлению](#SQL)
