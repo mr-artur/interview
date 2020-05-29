@@ -30,6 +30,9 @@
 ### Функции
 + [`COUNT`](#COUNT) ([_синтаксис_](#Синтаксис-функции-COUNT)) ([_примеры_](#Примеры-использования-функции-COUNT)) 
 + [`AVG`](#AVG) ([_синтаксис_](#Синтаксис-функции-AVG)) ([_примеры_](#Примеры-использования-функции-AVG)) 
++ [`MIN`](#MIN) ([_синтаксис_](#Синтаксис-функции-MIN)) ([_примеры_](#Примеры-использования-функции-MIN)) 
++ [`MAX`](#MAX) ([_синтаксис_](#Синтаксис-функции-MAX)) ([_примеры_](#Примеры-использования-функции-MAX)) 
++ [`SUM`](#SUM) ([_синтаксис_](#Синтаксис-функции-SUM)) ([_примеры_](#Примеры-использования-функции-SUM)) 
 
 ## Что такое _SQL_?
 _SQL_ (Structured Query Language) - это язык структурированных запросов, который используется для управления реляционными базами данных и данными в них.
@@ -1643,5 +1646,160 @@ FROM Universities
 WHERE Location = 'Moscow'
 ```
 Вывод : `20`
+
+[к оглавлению](#SQL)
+
+## `MIN`
+Оператор `MIN` - это функция, возвращающая минимальное значение столбца.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис функции `MIN`
+Функция `MIN` имеет такой синтаксис :
+```sql
+MIN(column_name)
+```
+
+[к оглавлению](#SQL)
+
+#### Примеры использования функции `MIN`
+Имеется следующая таблица `Universities` :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400|	12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300|	24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4|	Moscow State University	|35100|	39	|14358	|Moscow	|msu.ru
+5	|Higher School of Economics	|20335	|12	|1615	|Moscow|	hse.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg|	urfu.ru
+7	|National Research Nuclear University	|8600	|10	|936	|Moscow|	mephi.ru
+
+__Пример 1__. Найти минимальное значение столбца `Professors`.
+```sql
+SELECT MIN(Professors)
+FROM Universities
+```
+Вывод : `936`
+
+__Пример 2__. Найти минимальное количество студентов в любом из университетов Москвы.
+```sql
+SELECT MIN(Students)
+FROM Universities
+WHERE Location = 'Moscow'
+```
+Вывод : `8600`
+
+__Пример 3__. Найти город, в котором находится университет с наименьшим количеством студентов.
+```sql
+SELECT Location
+FROM Universities
+WHERE Students = (SELECT MIN(Students) FROM Universities)
+```
+Вывод : `Novosibirsk`
+
+[к оглавлению](#SQL)
+
+## `MAX`
+Оператор `MAX` - это функция, возвращающая максимальное значение столбца.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис функции `MAX`
+Функция `MAX` имеет такой синтаксис :
+```sql
+MAX(column_name)
+```
+
+[к оглавлению](#SQL)
+
+#### Примеры использования функции `MAX`
+Имеется следующая таблица `Universities` :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400|	12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300|	24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4|	Moscow State University	|35100|	39	|14358	|Moscow	|msu.ru
+5	|Higher School of Economics	|20335	|12	|1615	|Moscow|	hse.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg|	urfu.ru
+7	|National Research Nuclear University	|8600	|10	|936	|Moscow|	mephi.ru
+
+__Пример 1__. Найти максимальное значение колонки `Students`.
+```sql
+SELECT MAX(Students)
+FROM Universities
+```
+Вывод : `57000`
+
+__Пример 2__. Найти максимальное количество факультетов в университете среди университетов Санкт-Петербурга
+```sql
+SELECT MAX(Faculties)
+FROM Universities
+WHERE Location = 'Saint-Petersburg'
+```
+Вывод : `24`
+
+__Пример 3__. Найти имя университета с наибольшим числом преподавателей.
+```sql
+SELECT UniversityName
+FROM Universities
+WHERE Professors = (SELECT MAX(Professors) FROM Universities)
+```
+Вывод : `Moscow State University`
+
+[к оглавлению](#SQL)
+
+## `SUM`
+Оператор `SUM` - это функция, возвращающая сумму значений столбца. Применима ТОЛЬКО для числовых столбцов.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис функции `SUM`
+Функция `SUM` имеет такой синтаксис :
+```sql
+SUM ( [ALL | DISTINCT] expression )
+```
+Параметр `ALL` тут является параметром по умолчанию. Считается сумма всех строк.
+
+При указании параметра `DISTINCT` происходит суммирование только уникальных значений.
+
+[к оглавлению](#SQL)
+
+#### Примеры использования функции `SUM`
+Имеется следующая таблица `Universities` :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400|	12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300|	24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4|	Moscow State University	|35100|	39	|14358	|Moscow	|msu.ru
+5	|Higher School of Economics	|20335	|12	|1615	|Moscow|	hse.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg|	urfu.ru
+7	|National Research Nuclear University	|8600	|10	|936	|Moscow|	mephi.ru
+
+__Пример 1__. Найти количество студентов всех университетов в таблице.
+```sql
+SELECT SUM(Students)
+FROM Universities
+```
+Вывод : `161935`
+
+__Пример 2__. Найти количество преподавателей московских университетов.
+```sql
+SELECT SUM(Professors)
+FROM Universities
+WHERE Localion = 'Moscow'
+```
+Вывод : `16909`
+
+__Пример 3__. Произвести подсчет уникальных значений столбца `Faculties`.
+```sql
+SELECT SUM(DISTINCT Faculties)
+FROM Universities
+```
+Вывод : `117`, потому что в столбце `Faculties` присутствует две одинаковых записи `Faculties` под `ID = 1` и `ID = 5`, и в подсчет входит только одно из этих значений.
 
 [к оглавлению](#SQL)
