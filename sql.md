@@ -54,7 +54,10 @@
 + [`FOREIGN KEY`](#FOREIGN-KEY)
     + [Синтаксис оператора `FOREIGN KEY`](#Синтаксис-оператора-FOREIGN-KEY)
     + [Пример использования оператора `FOREIGN KEY`](#Пример-использования-оператора-FOREIGN-KEY)
-    
++ [`UNION`](#UNION) ([_синтаксис_](#Синтаксис-оператора-UNION)) ([_пример_](#Пример-использования-оператора-UNION))  
++ [`LIMIT`](#LIMIT) ([_синтаксис_](#Синтаксис-оператора-LIMIT)) ([_примеры_](#Примеры-использования-оператора-LIMIT))    
++ [`IN`](#IN) ([_синтаксис_](#Синтаксис-оператора-IN)) ([_пример_](#Пример-использования-оператора-IN))     
+
 ## Что такое _SQL_?
 _SQL_ (Structured Query Language) - это язык структурированных запросов, который используется для управления реляционными базами данных и данными в них.
 
@@ -1092,5 +1095,169 @@ BookID	|BookName
 2	|Object-Oriented Programming in C++
 1	|Thinking in Java
 3	|Computer Architecture
+
+[к оглавлению](#SQL)
+
+## `UNION`
+Оператор `UNION` используется для объединения двух и более запросов оператора `SELECT`.
+
+[к оглавлению](#SQL)
+
+Важно отметить, что все запросы, связываемые с помощью `UNION`, должны иметь одинаковое количество столбцов и типы возвращаемых данных, иначе произойдет ошибка при формировании результирующей таблицы.
+
+ #### Синтаксис оператора `UNION`
+ Оператор `UNION` имеет такой синтаксис :
+```sql
+SELECT column_name(s) FROM table1
+UNION
+SELECT column_name(s) FROM table2
+```
+
+[к оглавлению](#SQL)
+
+#### Пример использования оператора `UNION`
+Имеется следующая таблица `Artists` :
+
+|Singer	|Album	|Year	|Sale|
+|:----:|:---:|:---:|:---:|
+|The Prodigy	|Invaders Must Die	|2008	|1200000|
+|Drowning Pool	|Sinner	|2001	|400000|
+|Massive Attack	|Mezzanine	|1998	|2300000|
+|The Prodigy	|Fat of the Land	|1997	|600000|
+|The Prodigy	|Music For The Jilted Generation	|1994	|1500000|
+|Massive Attack	|100th Window	|2003	|1200000|
+|Drowning Pool	|Full Circle	|2007	|800000|
+|Massive Attack	|Danny The Dog	|2004	|1900000|
+|Drowning Pool	|Resilience	|2013	|500000|
+
+__Задание__. Вывести имена исполнителей и их альбомов с помощью `UNION`.
+```sql
+SELECT Singer FROM Artists
+UNION
+SELECT Album FROM Artists
+```
+Результат :
+
+Singer|	Album
+|:---:|:---:|
+The Prodigy|	Invaders Must Die
+Drowning Pool|	Sinner
+Massive Attack|	Mezzanine
+The Prodigy|	Fat of the Land
+The Prodigy|	Music For The Jilted Generation
+Massive Attack|	100th Window
+Drowning Pool|	Full Circle
+Massive Attack|	Danny The Dog
+Drowning Pool|	Resilience
+
+[к оглавлению](#SQL)
+
+## `LIMIT`
+Оператор `LIMIT` позволяет вывести указанное количество строк из результата запроса.
+
+Оператор `LIMIT` всегда пишется в конце запроса.
+
+Используется в `MySQL`. Аналогом в `MS SQL` является оператор `TOP`.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `LIMIT`
+Оператор `LIMIT` имеет такой синтаксис :
+```sql
+LIMIT first_row [, last_row]
+```
+Оператор `LIMIT` выводит то количество записей, которое указано в параметре `first_row`. Если же указан еще и параметр `last_row`, то выводятся строки с `first_row` по `last_row` включительно.
+
+[к оглавлению](#SQL)
+
+#### Примеры использования оператора `LIMIT`
+Имеется следующая таблица `Universities` :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400|	12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300|	24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4|	Moscow State University	|35100|	39	|14358	|Moscow	|msu.ru
+5	|Higher School of Economics	|20335	|12	|1615	|Moscow|	hse.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg|	urfu.ru
+7	|National Research Nuclear University	|8600	|10	|936	|Moscow|	mephi.ru
+
+__Задание 1__. Вывести первые `2` записи из таблицы.
+```sql
+SELECT *
+FROM Universities
+LIMIT 2
+```
+Результат :
+
+ID	|UniversityName|	Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University|	12400	|12|	1229	|Perm	|psu.ru
+2	|Saint Petersburg State University|	21300|	24|	13126|	Saint-Petersburg|	 spbu.ru
+
+__Пример 2__. Вывести названия университетов из таблицы с `4` - го по `6` - й.
+```sql
+SELECT UniversityName
+FROM Universities
+LIMIT 4, 6
+```
+Результат :
+
+UniversityName|
+|:---:|
+Moscow State University|
+Higher School of Economics|
+Ural Federal University|
+
+[к оглавлению](#SQL)
+
+## `IN`
+Оператор `IN` позволяет определить, совпадает ли значение объекта со значением в списке.
+
+[к оглавлению](#SQL)
+
+#### Синтаксис оператора `IN`
+Оператор `IN` имеет такой синтаксис :
+```sql
+expression [ NOT ] IN ( expression, [...] )
+```
+
+[к оглавлению](#SQL)
+
+#### Пример использования оператора `IN`
+Имеется следующая таблица `Universities` :
+
+ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400|	12	|1229	|Perm	|psu.ru
+2	|Saint Petersburg State University	|21300|	24|	13126	|Saint-Petersburg	| spbu.ru
+3	|Novosibirsk State University	|7200|	13	|1527	|Novosibirsk	|nsu.ru
+4|	Moscow State University	|35100|	39	|14358	|Moscow	|msu.ru
+5	|Higher School of Economics	|20335	|12	|1615	|Moscow|	hse.ru
+6	|Ural Federal University	|57000	|19	|5640	|Yekaterinburg|	urfu.ru
+7	|National Research Nuclear University	|8600	|10	|936	|Moscow|	mephi.ru
+
+__Задание__. Вывести записи университетов из Новосибирска и Перми.
+```sql
+SELECT *
+FROM Universities
+WHERE Location IN ('Novosibirsk', 'Perm')
+```
+Этот запрос аналогичен :
+```sql
+SELECT *
+FROM Universities
+WHERE Location = 'Novosibirsk' 
+OR Location = 'Perm'
+```
+Таким образом, если значений много, то удобнее их перечислить в `IN`.
+
+Результат :
+
+ID	|UniversityName	|Students	|Faculties	|Professores	|Location	|Site
+|:----:|:---:|:---:|:---:|:----:|:---:|:---:|
+1	|Perm State National Research University	|12400	|12	|1229	|Perm	|psu.ru
+3	|Novosibirsk State University	|7200	|13	|1527	|Novosibirsk	|nsu.ru
 
 [к оглавлению](#SQL)
