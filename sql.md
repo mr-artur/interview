@@ -43,7 +43,7 @@
 + [`COMMIT`](#COMMIT) ([_синтаксис_](#Синтаксис-оператора-COMMIT)) ([_пример_](#Пример-использования-оператора-COMMIT)) 
 + [`ROLLBACK`](#ROLLBACK) ([_синтаксис_](#Синтаксис-оператора-ROLLBACK)) ([_пример_](#Пример-использования-оператора-ROLLBACK)) 
 + [`SET SAVEPOINT` и `RELEASE SAVEPOINT`](#SET-SAVEPOINT-и-RELEASE-SAVEPOINT) ([_синтаксис_](#Синтаксис-операторов-SET-SAVEPOINT-и-RELEASE-SAVEPOINT)) ([_пример_](#Пример-использования-операторов-SET-SAVEPOINT-и-RELEASE-SAVEPOINT)) 
-+ [`BEGIN TRANSACTION`](#BEGIN-TRANSACTION) ([_пример_](#Пример-использования-оператора-BEGIN TRANSACTION))
++ [`BEGIN TRANSACTION`](#BEGIN-TRANSACTION) ([_пример_](#Пример-использования-оператора-BEGIN-TRANSACTION))
 ### Функции
 + [`COUNT`](#COUNT) ([_синтаксис_](#Синтаксис-функции-COUNT)) ([_примеры_](#Примеры-использования-функции-COUNT)) 
 + [`AVG`](#AVG) ([_синтаксис_](#Синтаксис-функции-AVG)) ([_примеры_](#Примеры-использования-функции-AVG)) 
@@ -84,6 +84,7 @@ _SQL_ состоит из `4`-х частей :
     + `SET SAVEPOINT` ([_перейти_](#SET-SAVEPOINT-и-RELEASE-SAVEPOINT))
     + `RELEASE SAVEPOINT` ([_перейти_](#SET-SAVEPOINT-и-RELEASE-SAVEPOINT))
     + `BEGIN TRANSACTION` ([_перейти_](#BEGIN-TRANSACTION))
+    
 [к оглавлению](#SQL)
 
 ## `JOIN` Операторы
@@ -417,7 +418,7 @@ Authors.AuthorID	|Authors.AuthorName	|Books.BookID	|Books.BookName
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `CREATE TABLE`
+### Синтаксис оператора `CREATE TABLE`
 Синтаксис оператора `CREATE` выглядит следующим образом :
 ```sql
 CREATE TABLE table_name (
@@ -430,7 +431,7 @@ CREATE TABLE table_name (
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `CREATE TABLE`
+### Пример использования оператора `CREATE TABLE`
 Пример использования оператора `CREATE TABLE` :
 ```sql
 CREATE TABLE Planets (
@@ -452,7 +453,7 @@ CREATE TABLE Planets (
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `ALTER TABLE`
+### Синтаксис оператора `ALTER TABLE`
 Синтаксис оператора `ALTER TABLE` выглядит следующим образом :
 ```sql
 ALTER TABLE table_name
@@ -461,7 +462,7 @@ ADD column_name datatype
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `ALTER TABLE`
+### Пример использования оператора `ALTER TABLE`
 Имеется следующая таблица `Artists` :
 
 |Singer	        |Album	  |Year	     |Sale   |
@@ -505,7 +506,7 @@ SELECT * FROM Artists
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `DROP`
+### Синтаксис оператора `DROP`
 Оператор `DROP` имеет одинаковый синтаксис для удаления разных объектов :
 ```sql
 DROP [ INDEX | TABLE | DATABASE ] object
@@ -513,7 +514,7 @@ DROP [ INDEX | TABLE | DATABASE ] object
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `DROP TABLE`
+### Пример использования оператора `DROP TABLE`
 Удалим таблицу `Artists` :
 ```sql
 DROP TABLE Artists;
@@ -521,7 +522,7 @@ DROP TABLE Artists;
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `DROP DATABASE`
+### Пример использования оператора `DROP DATABASE`
 Удалим базу данных `Library` :
 ```sql
 DROP DATABASE Library;
@@ -536,7 +537,7 @@ DROP DATABASE Library;
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `SELECT`
+### Синтаксис оператора `SELECT`
 ```sql
 SELECT column_list
 FROM table_name
@@ -551,7 +552,7 @@ ORDER BY expression]
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `SELECT`
+### Примеры использования оператора `SELECT`
 
 Предположим, у нас есть таблица `Planets` :
 
@@ -605,7 +606,7 @@ SELECT * FROM Planets WHERE PlanetName = 'Neptune'
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `INSERT`
+### Синтаксис оператора `INSERT`
 
 Оператор `INSERT` имеет следующий синтаксис :
 ```sql
@@ -623,7 +624,7 @@ INSERT INTO table_name SELECT column_name,... FROM table_name
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `INSERT`
+### Примеры использования оператора `INSERT`
 __Пример 1__. Предположим, что имеется следующая таблица `Planets` :
 
 |ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener|
@@ -707,7 +708,7 @@ SELECT * FROM PlanetsWithoutRings
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `UPDATE`
+### Синтаксис оператора `UPDATE`
 
 Оператор `UPDATE` имеет следующий синтаксис :
 ```sql
@@ -723,7 +724,7 @@ SET expression
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `UPDATE`
+### Примеры использования оператора `UPDATE`
 Имеется следующая таблица `Planets` :
 
 |ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener
@@ -799,7 +800,7 @@ SELECT TOP(3) * FROM Planets
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `DELETE`
+### Синтаксис оператора `DELETE`
 
 Оператор `DELETE` имеет следующий синтаксис :
 ```sql
@@ -810,7 +811,7 @@ DELETE FROM table_name
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `DELETE`
+### Примеры использования оператора `DELETE`
 Имеется следующая таблица `Planets` :
 
 |ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener
@@ -845,7 +846,7 @@ WHERE ID = 3
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `WHERE`
+### Синтаксис оператора `WHERE`
 Оператор `WHERE` имеет следующий синтаксис :
 ```sql
 WHERE condition
@@ -854,7 +855,7 @@ WHERE condition
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `WHERE`
+### Примеры использования оператора `WHERE`
 Имеется следующая таблица `Planets` :
 
 |ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener|
@@ -903,7 +904,7 @@ AND PlanetName NOT LIKE 'S%'
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `GROUP BY`
+### Синтаксис оператора `GROUP BY`
 Оператор `GROUP BY` имеет следующий синтаксис :
 ```sql
 GROUP BY column_name
@@ -912,7 +913,7 @@ GROUP BY column_name
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `GROUP BY`
+### Примеры использования оператора `GROUP BY`
 Предположим, что имеется следующая таблица `Artists` :
 
 |Singer	|Album	|Year	|Sale|
@@ -966,7 +967,7 @@ GROUP BY Singer
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `HAVING`
+### Синтаксис оператора `HAVING`
 Оператор `HAVING` имеет следующий синтаксис :
 ```sql
 HAVING aggregate_function(column_name) operator value
@@ -974,7 +975,7 @@ HAVING aggregate_function(column_name) operator value
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `HAVING`
+### Примеры использования оператора `HAVING`
 Имеется следующая таблица `Artists` :
 
 |Singer	|Album	|Year	|Sale|
@@ -1025,7 +1026,7 @@ HAVING MIN(YEAR) < 1995
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `ORDER BY`
+### Синтаксис оператора `ORDER BY`
 Оператор `ORDER BY` имеет следующий синтаксис :
 ```sql
 ORDER BY column_name [ASC | DESC]
@@ -1036,7 +1037,7 @@ ORDER BY column_name [ASC | DESC]
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `ORDER BY`
+### Примеры использования оператора `ORDER BY`
 Имеется следующая таблица `Artists` :
 
 |Singer	|Album	|Year	|Sale|
@@ -1095,7 +1096,7 @@ Drowning Pool	|Full Circle	|2007
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `DISTINCT`
+### Синтаксис оператора `DISTINCT`
 Оператор `DISTINCT` имеет следующий синтаксис :
 ```sql
 SELECT DISTINCT column_name FROM table_name
@@ -1103,7 +1104,7 @@ SELECT DISTINCT column_name FROM table_name
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `ORDER BY`
+### Примеры использования оператора `ORDER BY`
 Имеется следующая таблица `Artists` :
 
 |Singer	|Album	|Year	|Sale|
@@ -1167,21 +1168,21 @@ FALSE	|FALSE|	FALSE|  	FALSE
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `AND`
+### Синтаксис оператора `AND`
 ```sql
 boolean_expression AND boolean_expression
 ```
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `OR`
+### Синтаксис оператора `OR`
 ```sql
 boolean_expression OR boolean_expression
 ```
 
 [к оглавлению](#SQL)
 
-#### Примеры использования операторов `AND` и `OR`
+### Примеры использования операторов `AND` и `OR`
 Предположим, что имеется таблица `Planets` :
 
 ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener
@@ -1225,7 +1226,7 @@ ID	|PlanetName|	Radius|	SunSeason|	OpeningYear	|HavingRings	|Opener
  
  [к оглавлению](#SQL)
  
-#### Синтаксис оператора `DEFAULT`
+### Синтаксис оператора `DEFAULT`
 ```sql
 CREATE TABLE table_name (
     column_name1 data_type(size) DEFAULT 'default_name'
@@ -1234,7 +1235,7 @@ CREATE TABLE table_name (
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `DEFAULT`
+### Пример использования оператора `DEFAULT`
 __Задание__. Создать таблицу `Planets`, где по умолчанию в столбце `HavingRings` будет стоять значение `No`.
 
 ```sql
@@ -1261,7 +1262,7 @@ CREATE TABLE Planets (
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `CREATE VIEW`
+### Синтаксис оператора `CREATE VIEW`
 Для создания представления используется оператор `CREATE` и синтаксис выглядит следующим образом :
 ```sql
 CREATE VIEW view_name
@@ -1272,7 +1273,7 @@ WHERE condition
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `CREATE VIEW`
+### Пример использования оператора `CREATE VIEW`
 Имеется следующая таблица `Planets` :
 
 ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener
@@ -1312,7 +1313,7 @@ Venus	|1610
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `PRIMARY KEY`
+### Синтаксис оператора `PRIMARY KEY`
 Оператор `PRIMARY KEY` имеет такой синтаксис :
 
 Для MySQL :
@@ -1331,7 +1332,7 @@ CREATE TABLE table_name (
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `PRIMARY KEY`
+### Пример использования оператора `PRIMARY KEY`
 __Задание__. Создать таблицу `Planets` с первичным ключом ID.
 Решение для `MySQL` :
 ```sql
@@ -1366,7 +1367,7 @@ CREATE TABLE Planets (
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `FOREIGN KEY`
+### Синтаксис оператора `FOREIGN KEY`
 Оператор `FOREIGN KEY` имеет такой синтаксис :
 
 Для MySQL :
@@ -1388,7 +1389,7 @@ CREATE TABLE table_1 (
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `FOREIGN KEY`
+### Пример использования оператора `FOREIGN KEY`
 __Задание__. Создать две таблицы, первая - `Authors`, содержащая 2 столбца, `AuthorID` и `AuthorName`, где `AuthorID` будет первичным ключом. Вторая таблица называется `Books` и содержит поля `BookID`, которое является вторичным ключом, ссылающимся на `Authors.AuthorID` и `BookName`.
 ```sql
 CREATE TABLE Authors (
@@ -1430,7 +1431,7 @@ BookID	|BookName
 
 Важно отметить, что все запросы, связываемые с помощью `UNION`, должны иметь одинаковое количество столбцов и типы возвращаемых данных, иначе произойдет ошибка при формировании результирующей таблицы.
 
- #### Синтаксис оператора `UNION`
+ ### Синтаксис оператора `UNION`
  Оператор `UNION` имеет такой синтаксис :
 ```sql
 SELECT column_name(s) FROM table1
@@ -1440,7 +1441,7 @@ SELECT column_name(s) FROM table2
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `UNION`
+### Пример использования оператора `UNION`
 Имеется следующая таблица `Artists` :
 
 |Singer	|Album	|Year	|Sale|
@@ -1486,7 +1487,7 @@ Drowning Pool|	Resilience
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `LIMIT`
+### Синтаксис оператора `LIMIT`
 Оператор `LIMIT` имеет такой синтаксис :
 ```sql
 LIMIT first_row [, last_row]
@@ -1495,7 +1496,7 @@ LIMIT first_row [, last_row]
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `LIMIT`
+### Примеры использования оператора `LIMIT`
 Имеется следующая таблица `Universities` :
 
 ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
@@ -1542,7 +1543,7 @@ Ural Federal University|
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `IN`
+### Синтаксис оператора `IN`
 Оператор `IN` имеет такой синтаксис :
 ```sql
 expression [ NOT ] IN ( expression, [...] )
@@ -1550,7 +1551,7 @@ expression [ NOT ] IN ( expression, [...] )
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `IN`
+### Пример использования оператора `IN`
 Имеется следующая таблица `Universities` :
 
 ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
@@ -1596,7 +1597,7 @@ ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `TRUNCATE`
+### Синтаксис оператора `TRUNCATE`
 Оператор `TRUNCATE` имеет такой синтаксис :
 ```sql
 TRUNCATE TABLE table_name
@@ -1604,7 +1605,7 @@ TRUNCATE TABLE table_name
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `TRUNCATE`
+### Пример использования оператора `TRUNCATE`
 Имеется следующая таблица `Artists` :
 
 |Singer	|Album	|Year	|Sale|
@@ -1635,7 +1636,7 @@ DELETE FROM Artists
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `NOT`
+### Синтаксис оператора `NOT`
 Оператор `NOT` имеет такой синтаксис :
 ```sql
 [ NOT ] boolean_expression
@@ -1643,7 +1644,7 @@ DELETE FROM Artists
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `NOT`
+### Примеры использования оператора `NOT`
 Имеется следующая таблица `Artists` :
 
 |Singer	|Album	|Year	|Sale|
@@ -1703,7 +1704,7 @@ Drowning Pool	|Resilience	|2013|	500000
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `AS`
+### Синтаксис оператора `AS`
 Оператор `AS` имеет такой синтаксис :
 ```sql
 SELECT column_name AS new_column_name FROM table_name
@@ -1711,7 +1712,7 @@ SELECT column_name AS new_column_name FROM table_name
 
 [к оглавлению](#SQL)
 
-#### Пример использования оператора `AS`
+### Пример использования оператора `AS`
 
 Предположим, у нас есть таблица `Planets` :
 
@@ -1742,7 +1743,7 @@ AverageRadius|
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `LIKE`
+### Синтаксис оператора `LIKE`
 Оператор `LIKE` имеет такой синтаксис :
 ```sql
 expression [ NOT ] LIKE pattern
@@ -1760,7 +1761,7 @@ _	|Любой одиночный символ	|Пример 2
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `LIKE`
+### Примеры использования оператора `LIKE`
 Имеется следующая таблица `Universities` :
 
 ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
@@ -1836,7 +1837,7 @@ ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
 
 [к оглавлению](#SQL)
 
-#### Синтаксис оператора `BETWEEN`
+### Синтаксис оператора `BETWEEN`
 Оператор `BETWEEN` имеет такой синтаксис :
 ```sql
 test_expression [NOT] BETWEEN begin_expression AND end_expression
@@ -1848,7 +1849,7 @@ test_expression [NOT] BETWEEN begin_expression AND end_expression
 
 [к оглавлению](#SQL)
 
-#### Примеры использования оператора `BETWEEN`
+### Примеры использования оператора `BETWEEN`
 Имеется следующая таблица `Universities` :
 
 ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
@@ -2295,7 +2296,7 @@ END CATCH
 
 [к оглавлению](#SQL)
 
-#### Синтаксис функции `COUNT`
+### Синтаксис функции `COUNT`
 Функция `COUNT` имеет такой синтаксис :
 ```sql
 COUNT(column_name)
@@ -2307,7 +2308,7 @@ COUNT(*)
 
 [к оглавлению](#SQL)
 
-#### Примеры использования функции `COUNT`
+### Примеры использования функции `COUNT`
 Имеется следующая таблица `Universities` :
 
 ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
@@ -2350,7 +2351,7 @@ WHERE Faculties > 20
 
 [к оглавлению](#SQL)
 
-#### Синтаксис функции `AVG`
+### Синтаксис функции `AVG`
 Функция `AVG` имеет такой синтаксис :
 ```sql
 AVG(column_name)
@@ -2358,7 +2359,7 @@ AVG(column_name)
 
 [к оглавлению](#SQL)
 
-#### Примеры использования функции `AVG`
+### Примеры использования функции `AVG`
 Имеется следующая таблица `Universities` :
 
 ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
@@ -2393,7 +2394,7 @@ WHERE Location = 'Moscow'
 
 [к оглавлению](#SQL)
 
-#### Синтаксис функции `MIN`
+### Синтаксис функции `MIN`
 Функция `MIN` имеет такой синтаксис :
 ```sql
 MIN(column_name)
@@ -2401,7 +2402,7 @@ MIN(column_name)
 
 [к оглавлению](#SQL)
 
-#### Примеры использования функции `MIN`
+### Примеры использования функции `MIN`
 Имеется следующая таблица `Universities` :
 
 ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
@@ -2444,7 +2445,7 @@ WHERE Students = (SELECT MIN(Students) FROM Universities)
 
 [к оглавлению](#SQL)
 
-#### Синтаксис функции `MAX`
+### Синтаксис функции `MAX`
 Функция `MAX` имеет такой синтаксис :
 ```sql
 MAX(column_name)
@@ -2452,7 +2453,7 @@ MAX(column_name)
 
 [к оглавлению](#SQL)
 
-#### Примеры использования функции `MAX`
+### Примеры использования функции `MAX`
 Имеется следующая таблица `Universities` :
 
 ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
@@ -2495,7 +2496,7 @@ WHERE Professors = (SELECT MAX(Professors) FROM Universities)
 
 [к оглавлению](#SQL)
 
-#### Синтаксис функции `SUM`
+### Синтаксис функции `SUM`
 Функция `SUM` имеет такой синтаксис :
 ```sql
 SUM ( [ALL | DISTINCT] expression )
@@ -2506,7 +2507,7 @@ SUM ( [ALL | DISTINCT] expression )
 
 [к оглавлению](#SQL)
 
-#### Примеры использования функции `SUM`
+### Примеры использования функции `SUM`
 Имеется следующая таблица `Universities` :
 
 ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
@@ -2548,7 +2549,7 @@ FROM Universities
 
 [к оглавлению](#SQL)
 
-#### Синтаксис функции `ROUND`
+### Синтаксис функции `ROUND`
 Функция `ROUND` имеет такой синтаксис :
 ```sql
 ROUND(expression, length)
@@ -2559,7 +2560,7 @@ ROUND(expression, length)
 
 [к оглавлению](#SQL)
 
-#### Примеры использования функции `ROUND`
+### Примеры использования функции `ROUND`
 Предположим, у нас есть таблица `Planets` :
 
 |ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener |
@@ -2599,7 +2600,7 @@ SELECT ROUNT (43532.8123, 3)
 
 [к оглавлению](#SQL)
 
-#### Синтаксис функции `UCASE`
+### Синтаксис функции `UCASE`
 Функция `UCASE` имеет такой синтаксис :
 ```sql
 UCASE(column_name)
@@ -2608,7 +2609,7 @@ UCASE(column_name)
 
 [к оглавлению](#SQL)
 
-#### Примеры использования функции `UCASE`
+### Примеры использования функции `UCASE`
 Предположим, у нас есть таблица `Planets` :
 
 |ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener |
@@ -2653,7 +2654,7 @@ NEPTUNE|
 
 [к оглавлению](#SQL)
 
-#### Синтаксис функции `LCASE`
+### Синтаксис функции `LCASE`
 Функция `LCASE` имеет такой синтаксис :
 ```sql
 LCASE(column_name)
@@ -2662,7 +2663,7 @@ LCASE(column_name)
 
 [к оглавлению](#SQL)
 
-#### Примеры использования функции `LCASE`
+### Примеры использования функции `LCASE`
 Предположим, у нас есть таблица `Planets` :
 
 |ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener |
@@ -2708,7 +2709,7 @@ Galileo Galilei|
 
 [к оглавлению](#SQL)
 
-#### Синтаксис функции `LEN`
+### Синтаксис функции `LEN`
 Функция `LEN` имеет такой синтаксис :
 ```sql
 LEN(column_name)
@@ -2716,7 +2717,7 @@ LEN(column_name)
 
 [к оглавлению](#SQL)
 
-#### Примеры использования функции `LEN`
+### Примеры использования функции `LEN`
 Предположим, у нас есть таблица `Planets` :
 
 |ID	|PlanetName	|Radius	|SunSeason	|OpeningYear	|HavingRings	|Opener |
@@ -2762,7 +2763,7 @@ Neptune	|6
 
 [к оглавлению](#SQL)
 
-#### Синтаксис функции `MID`
+### Синтаксис функции `MID`
 Функция `MID` имеет такой синтаксис :
 ```sql
 MID(colunm_name,start [,length])
@@ -2773,7 +2774,7 @@ MID(colunm_name,start [,length])
 
 [к оглавлению](#SQL)
 
-#### Пример использования функции `MID`
+### Пример использования функции `MID`
 Имеется следующая таблица `Universities` :
 
 ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
@@ -2810,7 +2811,7 @@ Mos|
 
 [к оглавлению](#SQL)
 
-#### Синтаксис функции `NOW`
+### Синтаксис функции `NOW`
 Функция `NOW` имеет такой синтаксис :
 ```sql
 NOW()
@@ -2818,7 +2819,7 @@ NOW()
 
 [к оглавлению](#SQL)
 
-#### Пример использования функции `NOW`
+### Пример использования функции `NOW`
 Имеется следующая таблица `Universities` :
 
 ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
