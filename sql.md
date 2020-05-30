@@ -34,6 +34,9 @@
 + [`AS`](#AS) ([_синтаксис_](#Синтаксис-оператора-AS)) ([_пример_](#Пример-использования-оператора-AS)) 
 + [`LIKE`](#LIKE) ([_синтаксис_](#Синтаксис-оператора-LIKE)) ([_примеры_](#Примеры-использования-оператора-LIKE)) 
 + [`BETWEEN`](#BETWEEN) ([_синтаксис_](#Синтаксис-оператора-BETWEEN)) ([_примеры_](#Примеры-использования-оператора-BETWEEN)) 
++ [`GRANT`](#GRANT) ([_синтаксис_](#Синтаксис-оператора-GRANT)) ([_примеры_](#Примеры-использования-оператора-GRANT)) 
++ [`DENY`](#DENY) ([_синтаксис_](#Синтаксис-оператора-DENY)) ([_примеры_](#Примеры-использования-оператора-DENY)) 
++ [`REVOKE`](#REVOKE) ([_синтаксис_](#Синтаксис-оператора-REVOKE)) ([_примеры_](#Примеры-использования-оператора-REVOKE)) 
 ### Функции
 + [`COUNT`](#COUNT) ([_синтаксис_](#Синтаксис-функции-COUNT)) ([_примеры_](#Примеры-использования-функции-COUNT)) 
 + [`AVG`](#AVG) ([_синтаксис_](#Синтаксис-функции-AVG)) ([_примеры_](#Примеры-использования-функции-AVG)) 
@@ -64,9 +67,9 @@ _SQL_ состоит из `4`-х частей :
     + `UPDATE` ([_перейти_](#UPDATE))
     + `DELETE` ([_перейти_](#DELETE))
 + __DCL__ (Data Control Language) - это работа с правами. В нее входят такие операторы как :
-    + `GRANT`
-    + `DENY`
-    + `REVOKE`
+    + `GRANT` ([_перейти_](#GRANT))
+    + `DENY` ([_перейти_](#DENY))
+    + `REVOKE` ([_перейти_](#REVOKE))
 + __TCL__ (Transaction Control Language) - это работа с транзакциями. В нее входят такие операторы как :
     + `BEGIN TRANSACTION`
     + `COMMIT`
@@ -391,7 +394,7 @@ Authors.AuthorID	|Authors.AuthorName	|Books.BookID	|Books.BookName
 2	|Robert Lafore	|2|	Thinking in Java
 2	|Robert Lafore	|3	|Computer Architecture
 3	|Andrew Tanenbaum	|1|	Modern Operating System
-3	|Andrew Tanenbaum	|1	|Thinking in Java
+3	|Andrew Tanenbaum	|2	|Thinking in Java
 3	|Andrew Tanenbaum	|3	|Computer Architecture
 
 В результате, как мы видим, в таблице получилось `3 x 3 = 9` строк, то есть каждая строка из левой таблицы была сконкатенирована с каждой строкой из правой.
@@ -1885,6 +1888,141 @@ ID	|UniversityName	|Students	|Faculties	|Professors	|Location	|Site
 4	|Moscow State University|	35100|	39	|14358|	Moscow	|msu.ru
 5	|Higher School of Economics|	20335	|12	|1615|	Moscow|	hse.ru
 7	|National Research Nuclear University|	8600|	10|	936|	Moscow	|mephi.ru
+
+[к оглавлению](#SQL)
+
+## `GRANT`
+Оператор `GRANT` используется для назначения привилегий пользователям.
+
+[к оглавлению](#SQL)
+
+### Синтаксис оператора `GRANT`
+
+![alt text](https://sql-language.ru/wp-content/uploads/2009/11/clip_image002.gif)
+
+Здесь :
++ `system_priv` - системная привилегия
++ `role` - роль - набор соответствующих полномочий, которые администратор может коллективно предоставлять пользователям и другим ролям.
++ `user` - пользователь
++ `PUBLIC` - привилегия передается всем пользователям
++ `WITH ADMIN OPTION` - если предоставлены системные полномочия или роли, то параметр позволяет пользователю передать полномочие или роль другим пользователям или ролям
+
+```sql
+GRANT { ALL [ PRIVILEGES ] }
+      | permission [ ( column [ ,...n ] ) ] [ ,...n ]
+      [ ON [ class :: ] securable ] TO principal [ ,...n ]
+      [ WITH GRANT OPTION ] [ AS principal ]
+```
+
+[к оглавлению](#SQL)
+
+### Примеры использования оператора `GRANT`
+
+__Пример 1__. Пользователь `P1` является владельцем таблицы `Students`. Необходимо передать пользователю `P2' право на осуществление запросов на выборку к этой таблице.
+```sql
+GRANT SELECT ON Students TO P2
+```
+
+__Пример 2__. Пользователь `P1` является владельцем таблицы `Students`. Необходимо передать пользователю `P2` право на вставку записей в эту таблицу.
+```sql
+GRANT INSERT ON Students TO P2
+```
+
+__Пример 3__. Необходимо передать пользователям `P2` и `P3` права на осуществление запросов на выборку и вставку записей в таблицу `Students`.
+```sql
+GRANT SELECT, INSERT ON Students TO P2, P3
+```
+
+__Пример 4__. Необходимо разрешить пользователю `P2` изменять значения столбцов `Fall` и `Ball` в таблице `Students`.
+```sql
+GRANT UPDATE(Fall, Ball) ON Students TO P2
+```
+
+__Пример 5__. Необходимо предоставить все полномочия таблицы `Students` пользователю `P2`.
+```sql
+GRANT ALL ON Students TO P2
+```
+
+__Пример 6__. Необходимо разрешить всем пользователям делать запросы на выборку к таблице `Students`.
+```sql
+GRANT SELECT ON Students TO PUBLIC
+```
+
+__Пример 7__. Необходимо разрешить вставлять записи и делать запросы на выборку к таблице `Students` пользователю `P2`, а также дать ему возможность передавать права на нее.
+```sql
+GRANT SELECT, INSERT ON Students TO P2 WITH GRANT OPTION
+```
+
+[к оглавлению](#SQL)
+
+## `DENY`
+Оператор `DENY` используется для удаления полномочий пользователя. Удаляются его персональные полномочия, а также с этого момента он не может пользоваться полномочиями своей группы.
+
+[к оглавлению](#SQL)
+
+### Синтаксис оператора `DENY`
+```sql
+DENY {ALL  [PRIVILEGES]} | permission_list
+ [ON  [class::]  securable] TO principal_list
+ [CASCADE]   [ AS principal ]
+```
+
+[к оглавлению](#SQL)
+
+### Примеры использования оператора `DENY`
+
+__Пример 1__. Забрать у пользователя `P2` возможность вставлять записи в таблицу `Students`.
+```sql
+DENY INSERT ON Students TO P2
+```
+
+__Пример 2__. Забрать у пользователя `P2` возможность создавать таблицы.
+```sql
+DENY CREATE TABLE TO P2
+```
+
+[к оглавлению](#SQL)
+
+## `REVOKE`
+Оператор `REVOKE` используется для отмены привилегий пользователя или группы.
+
+[к оглавлению](#SQL)
+
+### Синтаксис оператора `REVOKE`
+```sql
+REVOKE [ GRANT OPTION FOR ]
+    { { SELECT | INSERT | UPDATE | DELETE | TRUNCATE | REFERENCES | TRIGGER }
+    [, ...] | ALL [ PRIVILEGES ] }
+    ON { [ TABLE ] имя_таблицы [, ...]
+         | ALL TABLES IN SCHEMA имя_схемы [, ...] }
+    FROM указание_роли [, ...]
+    [ CASCADE | RESTRICT ]
+```
+Это только один из возможных синтаксисов, в остальных как правило меняется только объект полномочий, то есть секция после `ON`.
+
+[к оглавлению](#SQL)
+
+### Примеры использования оператора `REVOKE`
+
+__Пример 1__. Забрать у пользователя `P2` возможность создавать таблицы.
+```sql
+REVOKE CREATE TABLE FROM P2
+```
+
+__Пример 2__. Забрать у пользователя `P2` возможность делать выборки из таблицы `Students`.
+```sql
+REVOKE SELECT ON Students FROM P2
+```
+
+__Пример 3__. Забрать у пользователя `P2` возможность удаления и изменения записей в таблице `Students`.
+```sql
+REVOKE DELETE, UPDATE ON Students FROM P2
+```
+
+__Пример 4__. Отменить всех привилегий в таблице `Students` для всех пользователей.
+```sql
+REVOKE ALL ON Students FROM PUBLIC
+```
 
 [к оглавлению](#SQL)
 
