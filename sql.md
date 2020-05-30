@@ -34,9 +34,16 @@
 + [`AS`](#AS) ([_синтаксис_](#Синтаксис-оператора-AS)) ([_пример_](#Пример-использования-оператора-AS)) 
 + [`LIKE`](#LIKE) ([_синтаксис_](#Синтаксис-оператора-LIKE)) ([_примеры_](#Примеры-использования-оператора-LIKE)) 
 + [`BETWEEN`](#BETWEEN) ([_синтаксис_](#Синтаксис-оператора-BETWEEN)) ([_примеры_](#Примеры-использования-оператора-BETWEEN)) 
+### Команды управления правами
 + [`GRANT`](#GRANT) ([_синтаксис_](#Синтаксис-оператора-GRANT)) ([_примеры_](#Примеры-использования-оператора-GRANT)) 
 + [`DENY`](#DENY) ([_синтаксис_](#Синтаксис-оператора-DENY)) ([_примеры_](#Примеры-использования-оператора-DENY)) 
-+ [`REVOKE`](#REVOKE) ([_синтаксис_](#Синтаксис-оператора-REVOKE)) ([_примеры_](#Примеры-использования-оператора-REVOKE)) 
++ [`REVOKE`](#REVOKE) ([_синтаксис_](#Синтаксис-оператора-REVOKE)) ([_примеры_](#Примеры-использования-оператора-REVOKE))
+### Команды управления транзакциями
++ [`SET TRANSACTION`](#SET-TRANSACTION) ([_синтаксис_](#Синтаксис-оператора-SET-TRANSACTION)) ([_примеры_](#Примеры-использования-оператора-SET-TRANSACTION)) 
++ [`COMMIT`](#COMMIT) ([_синтаксис_](#Синтаксис-оператора-COMMIT)) ([_пример_](#Пример-использования-оператора-COMMIT)) 
++ [`ROLLBACK`](#ROLLBACK) ([_синтаксис_](#Синтаксис-оператора-ROLLBACK)) ([_пример_](#Пример-использования-оператора-ROLLBACK)) 
++ [`SET SAVEPOINT` и `RELEASE SAVEPOINT`](#SET-SAVEPOINT-и-RELEASE-SAVEPOINT) ([_синтаксис_](#Синтаксис-операторов-SET-SAVEPOINT-и-RELEASE-SAVEPOINT)) ([_пример_](#Пример-использования-операторов-SET-SAVEPOINT-и-RELEASE-SAVEPOINT)) 
++ [`BEGIN TRANSACTION`](#BEGIN-TRANSACTION) ([_пример_](#Пример-использования-оператора-BEGIN TRANSACTION))
 ### Функции
 + [`COUNT`](#COUNT) ([_синтаксис_](#Синтаксис-функции-COUNT)) ([_примеры_](#Примеры-использования-функции-COUNT)) 
 + [`AVG`](#AVG) ([_синтаксис_](#Синтаксис-функции-AVG)) ([_примеры_](#Примеры-использования-функции-AVG)) 
@@ -71,10 +78,12 @@ _SQL_ состоит из `4`-х частей :
     + `DENY` ([_перейти_](#DENY))
     + `REVOKE` ([_перейти_](#REVOKE))
 + __TCL__ (Transaction Control Language) - это работа с транзакциями. В нее входят такие операторы как :
-    + `BEGIN TRANSACTION`
-    + `COMMIT`
-    + `ROLLBACK`
-
+    + `SET TRANSACTION` ([_перейти_](#SET-TRANSACTION))
+    + `COMMIT` ([_перейти_](#COMMIT))
+    + `ROLLBACK` ([_перейти_](#ROLLBACK))
+    + `SET SAVEPOINT` ([_перейти_](#SET-SAVEPOINT-и-RELEASE-SAVEPOINT))
+    + `RELEASE SAVEPOINT` ([_перейти_](#SET-SAVEPOINT-и-RELEASE-SAVEPOINT))
+    + `BEGIN TRANSACTION` ([_перейти_](#BEGIN-TRANSACTION))
 [к оглавлению](#SQL)
 
 ## `JOIN` Операторы
@@ -2023,6 +2032,261 @@ __Пример 4__. Отменить всех привилегий в табли
 ```sql
 REVOKE ALL ON Students FROM PUBLIC
 ```
+
+[к оглавлению](#SQL)
+
+## `SET TRANSACTION`
+Команда `SET TRANSACTION` служит для инициирования транзакции в БД и задания ее характеристик.
+
+[к оглавлению](#SQL)
+
+### Синтаксис оператора `SET TRANSACTION`
+Оператор `SET TRANSACTION` имеет такой синтаксис :
+```sql
+SET TRANSACTION [options]
+```
+
+[к оглавлению](#SQL)
+
+### Примеры использования оператора `SET TRANSACTION`
+__Пример 1__. Иницировать транзакцию только для чтения (должна работать быстрее).
+```sql
+SET TRANSACTION READ ONLY;
+```
+
+__Пример 2__. Инициировать транзакцию, которая будет позволять также и запись.
+```sql
+SET TRANSACTION READ WRITE
+```
+
+[к оглавлению](#SQL)
+
+## `COMMIT`
+Команда `COMMIT` служит для сохранения изменений, внесенными транзакцией, в БД.
+
+[к оглавлению](#SQL)
+
+### Синтаксис оператора `COMMIT`
+Оператор `COMMIT` имеет такой синтаксис :
+```sql
+COMMIT
+```
+
+[к оглавлению](#SQL)
+
+### Пример использования оператора `COMMIT`
+Предположим, что у нас есть следующая таблица `developers` :
+
+| ID | NAME              | SPECIALTY | EXPERIENCE | SALARY |
+|:---:|:-----------------:|:---------:|:----------:|:------:|
+|  1 | Eugene Suleimanov | Java      |          2 |   2500 |
+|  2 | Peter Romanenko   | Java      |          3 |   3500 |
+|  3 | Andrei Komarov    | C++       |          3 |   2500 |
+|  4 | Konstantin Geiko  | C#        |          2 |   2000 |
+|  5 | Asya Suleimanova  | UI/UX     |          2 |   1800 |
+|  7 | Ivan Ivanov       | C#        |          1 |    900 |
+|  8 | Ludmila Geiko     | UI/UX     |          2 |   1800 |
+
+__Задание__. С помощью транзакции удалить всех C++ разработчиков.
+Сначала выключим автоматическое выполнение транзакции :
+```sql
+mysql> SET autocommit = 0;
+```
+Далее удалим всех С++ разработчиков и закоммитим изменения :
+```sql
+mysql> DELETE FROM developers 
+       WHERE SPECIALTY = 'C++';
+
+mysql> COMMIT;
+```
+Результат :
+
+| ID | NAME              | SPECIALTY | EXPERIENCE | SALARY |
+|:---:|:-----------------:|:---------:|:----------:|:------:|
+|  1 | Eugene Suleimanov | Java      |          2 |   2500 |
+|  2 | Peter Romanenko   | Java      |          3 |   3500 |
+|  4 | Konstantin Geiko  | C#        |          2 |   2000 |
+|  5 | Asya Suleimanova  | UI/UX     |          2 |   1800 |
+|  7 | Ivan Ivanov       | C#        |          1 |    900 |
+|  8 | Ludmila Geiko     | UI/UX     |          2 |   1800 |
+
+Как видим, все разработчики С++ были удалены из таблицы.
+
+[к оглавлению](#SQL)
+
+## `ROLLBACK`
+Команда `ROLLBACK` служит для отката внесенных изменений с помощью транзакции в БД.
+
+[к оглавлению](#SQL)
+
+### Синтаксис оператора `ROLLBACK`
+Оператор `ROLLBACK` имеет такой синтаксис :
+```sql
+ROLLBACK
+```
+
+[к оглавлению](#SQL)
+
+### Пример использования оператора `ROLLBACK`
+Предположим, что у нас есть следующая таблица `developers` :
+
+| ID | NAME              | SPECIALTY | EXPERIENCE | SALARY |
+|:---:|:-----------------:|:---------:|:----------:|:------:|
+|  1 | Eugene Suleimanov | Java      |          2 |   2500 |
+|  2 | Peter Romanenko   | Java      |          3 |   3500 |
+|  3 | Andrei Komarov    | C++       |          3 |   2500 |
+|  4 | Konstantin Geiko  | C#        |          2 |   2000 |
+|  5 | Asya Suleimanova  | UI/UX     |          2 |   1800 |
+|  7 | Ivan Ivanov       | C#        |          1 |    900 |
+|  8 | Ludmila Geiko     | UI/UX     |          2 |   1800 |
+
+__Задание__. С помощью транзакции удалить всех C++ разработчиков, а потом откатить изменения.
+Сначала выключим автоматическое выполнение транзакции :
+```sql
+mysql> SET autocommit = 0;
+```
+Далее удалим всех С++ разработчиков и закоммитим изменения :
+```sql
+mysql> DELETE FROM developers 
+       WHERE SPECIALTY = 'C++';
+
+mysql> COMMIT;
+```
+Результат :
+
+| ID | NAME              | SPECIALTY | EXPERIENCE | SALARY |
+|:---:|:-----------------:|:---------:|:----------:|:------:|
+|  1 | Eugene Suleimanov | Java      |          2 |   2500 |
+|  2 | Peter Romanenko   | Java      |          3 |   3500 |
+|  4 | Konstantin Geiko  | C#        |          2 |   2000 |
+|  5 | Asya Suleimanova  | UI/UX     |          2 |   1800 |
+|  7 | Ivan Ivanov       | C#        |          1 |    900 |
+|  8 | Ludmila Geiko     | UI/UX     |          2 |   1800 |
+
+Как видим, все разработчики С++ были удалены из таблицы.
+
+Теперь с помощью команды `ROLLBACK` откатим внесенные коммитом изменения :
+```sql
+mysql> ROLLBACK;
+```
+Результат :
+
+| ID | NAME              | SPECIALTY | EXPERIENCE | SALARY |
+|:---:|:-----------------:|:---------:|:----------:|:------:|
+|  1 | Eugene Suleimanov | Java      |          2 |   2500 |
+|  2 | Peter Romanenko   | Java      |          3 |   3500 |
+|  3 | Andrei Komarov    | C++       |          3 |   2500 |
+|  4 | Konstantin Geiko  | C#        |          2 |   2000 |
+|  5 | Asya Suleimanova  | UI/UX     |          2 |   1800 |
+|  7 | Ivan Ivanov       | C#        |          1 |    900 |
+|  8 | Ludmila Geiko     | UI/UX     |          2 |   1800 |
+
+Как видим, таблица снова содержит нашего C++ разработчика.
+
+[к оглавлению](#SQL)
+
+## `SET SAVEPOINT` и `RELEASE SAVEPOINT`
+Команда `SET SAVEPOINT` позволяет задать точку, к моменту которой транзакция может откатиться.
+
+Команда `RELEASE SAVEPOINT` освобождает (удаляет) точку отката.
+
+[к оглавлению](#SQL)
+
+### Синтаксис операторов `SET SAVEPOINT` и `RELEASE SAVEPOINT`
+Оператор `SET SAVEPOINT` имеет такой синтаксис :
+```sql
+[SET] SAVEPOINT savepoint_name
+```
+
+Оператор `RELEASE SAVEPOINT` имеет такой синтаксис :
+```sql
+RELEASE SAVEPOINT savepoint_name
+```
+
+[к оглавлению](#SQL)
+
+### Пример использования операторов `SET SAVEPOINT` и `RELEASE SAVEPOINT`
+Предположим, что у нас есть следующая таблица `developers` :
+
+| ID | NAME              | SPECIALTY | EXPERIENCE | SALARY |
+|:---:|:-----------------:|:---------:|:----------:|:------:|
+|  1 | Eugene Suleimanov | Java      |          2 |   2500 |
+|  2 | Peter Romanenko   | Java      |          3 |   3500 |
+|  3 | Andrei Komarov    | C++       |          3 |   2500 |
+|  4 | Konstantin Geiko  | C#        |          2 |   2000 |
+|  5 | Asya Suleimanova  | UI/UX     |          2 |   1800 |
+|  7 | Ivan Ivanov       | C#        |          1 |    900 |
+
+__Задание__. Удалить трех разработчиков из таблицы, а потом откатить все изменения с помощью `SAVEPOINT`. После этого удалить точку отката.
+Сначала создадим точку возврата :
+```sql
+mysql> SAVEPOINT SP1;
+```
+
+Удалим трех разработчиков по `ID` :
+```sql
+mysql> DELETE FROM developers WHERE ID = 7;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> DELETE FROM developers WHERE ID = 6;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> DELETE FROM developers WHERE ID = 5;
+Query OK, 1 row affected (0.00 sec)
+```
+Результат :
+
+| ID | NAME              | SPECIALTY | EXPERIENCE | SALARY |
+|:---:|:-----------------:|:---------:|:----------:|:------:|
+|  1 | Eugene Suleimanov | Java      |          2 |   2500 |
+|  2 | Peter Romanenko   | Java      |          3 |   3500 |
+|  3 | Andrei Komarov    | C++       |          3 |   2500 |
+|  4 | Konstantin Geiko  | C#        |          2 |   2000 |
+
+Теперь с помощью команды `ROLLBACK` откатим внесенные автокоммитом изменения до точки сохранения `SP1` :
+```sql
+mysql> ROLLBACK TO SP1;
+```
+Результат :
+
+| ID | NAME              | SPECIALTY | EXPERIENCE | SALARY |
+|:---:|:-----------------:|:---------:|:----------:|:------:|
+|  1 | Eugene Suleimanov | Java      |          2 |   2500 |
+|  2 | Peter Romanenko   | Java      |          3 |   3500 |
+|  3 | Andrei Komarov    | C++       |          3 |   2500 |
+|  4 | Konstantin Geiko  | C#        |          2 |   2000 |
+|  5 | Asya Suleimanova  | UI/UX     |          2 |   1800 |
+|  6 | Ludmila Geiko     | UI/UX     |          2 |   1800 |
+|  7 | Ivan Ivanov       | C#        |          1 |    900 |
+
+Как видим, таблица вернулась к состоянию точки `SP1`.
+
+Теперь, когда нам больше не нужна точка сохранения, мы можем ее освободить :
+```sql
+mysql> RELEASE SAVEPOINT SP1;
+```
+
+[к оглавлению](#SQL)
+
+## `BEGIN TRANSACTION`
+Оператор `BEGIN TRANSACTION` используется для явного указания места начала транзакции и используется как правило  процедурах.
+
+[к оглавлению](#SQL)
+
+### Пример использования оператора `BEGIN TRANSACTION`
+```sql
+BEGIN TRY
+    BEGIN TRAN
+    UPDATE 1
+    UPDATE 2
+    UPDATE 3
+    COMMIT TRAN
+END TRY
+BEGIN CATCH
+    ROLLBACK TRAN
+END CATCH
+```
+В этой процедуре осуществляется транзакция из `3` - х действий, которая в случае успеха будет закоммичена, а в случае ошибки откачена.
 
 [к оглавлению](#SQL)
 
