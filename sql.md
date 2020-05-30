@@ -7,6 +7,8 @@
     + [`INNER JOIN`](#INNER-JOIN) ([_синтаксис_](#Синтаксис-оператора-INNER-JOIN)) ([_пример_](#Пример-использования-оператора-INNER-JOIN))
     + [`LEFT JOIN`](#LEFT-JOIN) ([_синтаксис_](#Синтаксис-оператора-LEFT-JOIN)) ([_пример_](#Пример-использования-оператора-LEFT-JOIN))
     + [`RIGHT JOIN`](#RIGHT-JOIN) ([_синтаксис_](#Синтаксис-оператора-RIGHT-JOIN)) ([_пример_](#Пример-использования-оператора-RIGHT-JOIN))
+    + [`FULL JOIN`](#FULL-JOIN) ([_синтаксис_](#Синтаксис-оператора-FULL-JOIN)) ([_пример_](#Пример-использования-оператора-FULL-JOIN))
+    + [`CROSS JOIN`](#CROSS-JOIN) ([_синтаксис_](#Синтаксис-оператора-CROSS-JOIN)) ([_пример_](#Пример-использования-оператора-CROSS-JOIN))
 + [`CREATE`](#CREATE) ([_синтаксис_](#Синтаксис-оператора-CREATE-TABLE)) ([_пример_](#Пример-использования-оператора-CREATE-TABLE))
 + [`ALTER TABLE`](#ALTER-TABLE) ([_синтаксис_](#Синтаксис-оператора-ALTER-TABLE)) ([_пример_](#Пример-использования-оператора-ALTER-TABLE))
 + [`DROP`](#DROP) ([_синтаксис_](#Синтаксис-оператора-DROP)) ([_пример `DROP TABLE`_](#Пример-использования-оператора-DROP-TABLE)) ([_пример `DROP-DATABASE`_](#Пример-использования-оператора-DROP-DATABASE))
@@ -198,9 +200,9 @@ ON Authors.AuthorID = Books.AuthorID
 
 Authors.AuthorID	|Authors.AuthorName	|Books.BookID	|Books.BookName
 |:---:|:---:|:---:|:---:|
-1	|Bruce Eckel	|1	|Thinking in Java
+1	|Bruce Eckel	|2	|Thinking in Java
 2	|Robert Lafore	|NULL	|NULL
-3	|Andrew Tanenbaum	|3	|Modern Operating System
+3	|Andrew Tanenbaum	|1	|Modern Operating System
 3	|Andrew Tanenbaum	|3	|Computer Architecture
 4|Sergei Nemchinskiy|NULL|NULL
 
@@ -257,12 +259,142 @@ ON Authors.AuthorID = Books.AuthorID
 
 Authors.AuthorID	|Authors.AuthorName|	Books.BookID	|Books.BookName
 |:---:|:---:|:---:|:---:|
-3|	Andrew Tanenbaum|	3	|Modern Operating System
-1	|Bruce Eckel	|1	|Thinking in Java
+3|	Andrew Tanenbaum|	1	|Modern Operating System
+1	|Bruce Eckel	|2	|Thinking in Java
 3|	Andrew Tanenbaum	|3	|Computer Architecture
 NULL|	NULL|	4	|Programming in Scala
 
 Как видим из результата, `RIGHT JOIN` помог нам достать все связанные записи таблиц, а также остальные записи правой таблицы, сконкатенированные со значениями `NULL`.
+
+[к оглавлению](#SQL)
+
+## `FULL JOIN`
+Оператор `FULL JOIN` (он же `FULL OUTER JOIN`) осуществляет формирование таблицы из записей двух таблиц, и помимо связанных записей, он также добавляет как остальные записи левой таблицы, сконкатенированные с `NULL`, так и остальные записи правой таблицы, сконкатенированные с `NULL`.
+
+Оператор `FULL JOIN` является симметричным, а поэтому порядок таблиц для его результата не важен.
+
+Действие оператора `FULL JOIN` можно воспринимать как `INNER JOIN` + `LEFT JOIN` + `RIGHT JOIN`, с исключенными повторяющимися выборками связанных записей.
+
+Алгоритм работы оператора `FULL JOIN` :
+1. Формирование результирующей таблицы из связанных записей двух таблиц с помощью `INNER JOIN`.
+2. Добавление в результирующую таблицу остальных значений из левой таблицы, сконкатенированных с `NULL`.
+3. Добавление в результирующую таблицу остальных значений из правой таблицы, сконкатенированных с `NULL`.
+
+[к оглавлению](#SQL)
+
+### Синтаксис оператора `FULL JOIN`
+```sql
+SELECT column_names [,... n]
+FROM Table_1 
+FULL JOIN Table_2
+ON condition
+```
+
+[к оглавлению](#SQL)
+
+### Пример использования оператора `FULL JOIN`
+Пусть у нас есть две таблицы. Первая из них - `Authors` - содержит информацию об авторах книг.
+
+AuthorID	|AuthorName
+|:---:|:---:|
+1	|Bruce Eckel
+2	|Robert Lafore
+3	|Andrew Tanenbaum
+4   |Sergei Nemchinskiy
+
+Вторая - `Books` - содержит информацию о написанных книгах.
+
+BookID |AuthorID|	BookName
+|:---:|:---:|:---:|
+1|3	|Modern Operating System
+2|1	|Thinking in Java
+3|3	|Computer Architecture
+4| NULL	|Programming in Scala
+
+__Задание__. Вывести информацию о написанных авторами книгах. При этом вывести также книги без авторов и авторов без книг.
+```sql
+SELECT Authors.*, Books.BookID, Books.BookName
+FROM Authors
+FULL JOIN Books
+ON Authors.AuthorID = Books.AuthorID
+```
+Результат :
+
+Authors.AuthorID	|Authors.AuthorName	|Books.BookID	|Books.BookName
+|:---:|:---:|:---:|:---:|
+1	|Bruce Eckel|	2	|Thinking in Java
+2	|Robert Lafore|	NULL	|NULL
+3	|Andrew Tanenbaum	|1|	Modern Operating System
+3	|Andrew Tanenbaum	|3|	Computer Architecture
+4|Sergei Nemchinskiy|NULL|NULL
+NULL	|NULL	|4	|Programming in Scala
+
+Как видим, `FULL JOIN` нам помог вывести связанные строки из обеих таблиц, а также остальные строки левой таблицы, сконкатенированные с `NULL`, и остальные строки правой таблицы, сконкатенированные с `NULL`.
+
+[к оглавлению](#SQL)
+
+## `CROSS JOIN`
+Оператор `CROSS JOIN` формирует таблицу с помощью перемножения множеств записей из двух таблиц. 
+
+При использовании оператора `CROSS JOIN` каждая строка левой таблицы конкатенируется с каждой строкой из правой таблицы. В результате получается таблица со всеми возможными сочетаниями строк из обеих таблиц.
+
+Оператор `CROSS JOIN` формирует таблицу перекрестным соединением (декартовым произведением) двух таблиц.
+
+[к оглавлению](#SQL)
+
+### Синтаксис оператора `CROSS JOIN`
+```sql
+SELECT column_names [,... n]
+FROM Table_1 
+CROSS JOIN Table_2
+```
+Следует обратить внимание, что в операторе отсутствует условие `ON`, так как оно тут не надо.
+
+[к оглавлению](#SQL)
+
+### Пример использования оператора `CROSS JOIN`
+Пусть у нас есть две таблицы. Первая из них - `Authors` - содержит информацию об авторах книг.
+
+AuthorID	|AuthorName
+|:---:|:---:|
+1	|Bruce Eckel
+2	|Robert Lafore
+3	|Andrew Tanenbaum
+
+Вторая - `Books` - содержит информацию о написанных книгах.
+
+BookID |AuthorID|	BookName
+|:---:|:---:|:---:|
+1|3	|Modern Operating System
+2|1	|Thinking in Java
+3|3	|Computer Architecture
+
+__Задание__. Вывести декартово произведение обеих таблиц.
+```sql
+SELECT Authors.*, Books.BookID, Books.BookName
+FROM Authors
+CROSS JOIN Books
+```
+Также аналогичный результат даст такая запись (тут произойдет неявный `CROSS JOIN`) :
+```sql
+SELECT Authors.*, Books.BookID, Books.BookName
+FROM Authors, Books
+```
+Результат :
+
+Authors.AuthorID	|Authors.AuthorName	|Books.BookID	|Books.BookName
+|:---:|:---:|:---:|:---:|
+1	|Bruce Eckel	|1	|Modern Operating System
+1	|Bruce Eckel	|2	|Thinking in Java
+1	|Bruce Eckel	|3|	Computer Architecture
+2	|Robert Lafore|1	|Modern Operating System
+2	|Robert Lafore	|2|	Thinking in Java
+2	|Robert Lafore	|3	|Computer Architecture
+3	|Andrew Tanenbaum	|1|	Modern Operating System
+3	|Andrew Tanenbaum	|1	|Thinking in Java
+3	|Andrew Tanenbaum	|3	|Computer Architecture
+
+В результате, как мы видим, в таблице получилось `3 x 3 = 9` строк, то есть каждая строка из левой таблицы была сконкатенирована с каждой строкой из правой.
 
 [к оглавлению](#SQL)
 
