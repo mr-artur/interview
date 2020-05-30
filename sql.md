@@ -5,6 +5,8 @@
 + [`JOIN` Операторы](#JOIN-Операторы)
     + [Рисунок видов `JOIN` операторов](#Рисунок-видов-JOIN-операторов)
     + [`INNER JOIN`](#INNER-JOIN) ([_синтаксис_](#Синтаксис-оператора-INNER-JOIN)) ([_пример_](#Пример-использования-оператора-INNER-JOIN))
+    + [`LEFT JOIN`](#LEFT-JOIN) ([_синтаксис_](#Синтаксис-оператора-LEFT-JOIN)) ([_пример_](#Пример-использования-оператора-LEFT-JOIN))
+    + [`RIGHT JOIN`](#RIGHT-JOIN) ([_синтаксис_](#Синтаксис-оператора-RIGHT-JOIN)) ([_пример_](#Пример-использования-оператора-RIGHT-JOIN))
 + [`CREATE`](#CREATE) ([_синтаксис_](#Синтаксис-оператора-CREATE-TABLE)) ([_пример_](#Пример-использования-оператора-CREATE-TABLE))
 + [`ALTER TABLE`](#ALTER-TABLE) ([_синтаксис_](#Синтаксис-оператора-ALTER-TABLE)) ([_пример_](#Пример-использования-оператора-ALTER-TABLE))
 + [`DROP`](#DROP) ([_синтаксис_](#Синтаксис-оператора-DROP)) ([_пример `DROP TABLE`_](#Пример-использования-оператора-DROP-TABLE)) ([_пример `DROP-DATABASE`_](#Пример-использования-оператора-DROP-DATABASE))
@@ -86,6 +88,11 @@ _SQL_ состоит из `4`-х частей :
 
 [к оглавлению](#SQL)
 
+## Рисунок видов `JOIN` операторов
+![alt text](https://4.bp.blogspot.com/-O6UyDMbXfEs/WpPb5eWZPEI/AAAAAAAATE8/fbx9wMpktp8APSC0hLkuyfJL9weoia2NACLcBGAs/s1600/LEFT%2Bvs%2BRight%2BOuter%2BJoin%2Bin%2BSQL.png)
+
+[к оглавлению](#SQL)
+
 ## `INNER JOIN`
 Оператор `INNER JOIN` помогает нам сформировать таблицу из записей двух или нескольких таблиц. Каждая строка из левой таблицы сопоставляется с каждой строкой из правой таблицы, после чего происходит проверка условия. Если условие истинно, то строки попадают в результирующую таблицу. В результирующей таблице строки формируются конкатенацией строк первой и второй таблиц.
 
@@ -132,7 +139,7 @@ ON Books.AuthorID = Authors.AuthorID
 ```
 Результат :
 
-AuthorID	|AuthorName | BookID | BookName
+Authors.AuthorID	|Authors.AuthorName | Authors.BookID | Authors.BookName
 |:---:|:---:|:---:|:---:|
 3|Andrew Tanenbaum|1 |Modern Operating System
 1|Bruce Eckel|2|Thinking in Java
@@ -142,8 +149,120 @@ AuthorID	|AuthorName | BookID | BookName
 
 [к оглавлению](#SQL)
 
-## Рисунок видов `JOIN` операторов
-![alt text](https://4.bp.blogspot.com/-O6UyDMbXfEs/WpPb5eWZPEI/AAAAAAAATE8/fbx9wMpktp8APSC0hLkuyfJL9weoia2NACLcBGAs/s1600/LEFT%2Bvs%2BRight%2BOuter%2BJoin%2Bin%2BSQL.png)
+## `LEFT JOIN`
+Оператор `LEFT JOIN` (он же `LEFT OUTER JOIN`) осуществляет формирование таблицы из записей двух таблиц, и помимо связанных записей, он еще и вставляет в выборку все записи из левой (первой) таблицы, сконкатенированные с `NULL`. В нем, как и в `RIGHT JOIN`, важен порядок следования таблиц, так как от этого будет зависеть результат.
+
+Алгоритм работы `LEFT JOIN` такой :
+1. Сначала происходит формирование таблицы с помощью внутреннего соединения `INNER JOIN` левой и правой таблиц, то есть, выбираются только все связанные записи.
+2. В результат добавляются записи из левой таблицы, не вошедшие в результат `INNER JOIN`. Для них, соответствующие ячейки, ссылающиеся на значения из правой таблицы, заполняются значениями `NULL`.
+
+[к оглавлению](#SQL)
+
+### Синтаксис оператора `LEFT JOIN`
+```sql
+SELECT column_names [,... n]
+FROM Table_1 
+LEFT JOIN Table_2
+ON condition
+```
+
+[к оглавлению](#SQL)
+
+### Пример использования оператора `LEFT JOIN`
+Пусть у нас есть две таблицы. Первая из них - `Authors` - содержит информацию об авторах книг.
+
+AuthorID	|AuthorName
+|:---:|:---:|
+1	|Bruce Eckel
+2	|Robert Lafore
+3	|Andrew Tanenbaum
+4   |Sergei Nemchinskiy
+
+Вторая - `Books` - содержит информацию о написанных книгах.
+
+BookID |AuthorID|	BookName
+|:---:|:---:|:---:|
+1|3	|Modern Operating System
+2|1	|Thinking in Java
+3|3	|Computer Architecture
+4| NULL	|Programming in Scala
+
+__Задание__. Вывести информацию о написанных авторами книгах. В результат должны быть видны и автора, не написавшие ни одной книги.
+```sql
+SELECT Authors.*, Books.BookID, Books.BookName
+FROM Authors
+LEFT JOIN Books
+ON Authors.AuthorID = Books.AuthorID
+```
+Результат :
+
+Authors.AuthorID	|Authors.AuthorName	|Books.BookID	|Books.BookName
+|:---:|:---:|:---:|:---:|
+1	|Bruce Eckel	|1	|Thinking in Java
+2	|Robert Lafore	|NULL	|NULL
+3	|Andrew Tanenbaum	|3	|Modern Operating System
+3	|Andrew Tanenbaum	|3	|Computer Architecture
+4|Sergei Nemchinskiy|NULL|NULL
+
+Как видим из результата, в выборку были добавлены сконкатенированные связанные записи из обеих таблиц, а также остальные строки из левой таблицы, сконкатенированные с `NULL`.
+
+[к оглавлению](#SQL)
+
+## `RIGHT JOIN`
+Оператор `RIGHT JOIN` (он же `RIGHT OUTER JOIN`) осуществляет формирование таблицы из записей двух таблиц, и помимо связанных записей, он еще и вставляет в выборку все записи из правой (второй) таблицы, сконкатенированные с `NULL`. В нем, как и в `LEFT JOIN`, важен порядок следования таблиц, так как от этого будет зависеть результат.
+
+Алгоритм работы `RIGHT JOIN` такой :
+1. Сначала происходит формирование таблицы с помощью внутреннего соединения `INNER JOIN` левой и правой таблиц, то есть, выбираются только все связанные записи.
+2. В результат добавляются записи из правой таблицы, не вошедшие в результат `INNER JOIN`. Для них, соответствующие ячейки, ссылающиеся на значения из левой таблицы, заполняются значениями `NULL`.
+
+[к оглавлению](#SQL)
+
+### Синтаксис оператора `RIGHT JOIN`
+```sql
+SELECT column_names [,... n]
+FROM Table_1 
+RIGHT JOIN Table_2
+ON condition
+```
+
+[к оглавлению](#SQL)
+
+### Пример использования оператора `RIGHT JOIN`
+Пусть у нас есть две таблицы. Первая из них - `Authors` - содержит информацию об авторах книг.
+
+AuthorID	|AuthorName
+|:---:|:---:|
+1	|Bruce Eckel
+2	|Robert Lafore
+3	|Andrew Tanenbaum
+4   |Sergei Nemchinskiy
+
+Вторая - `Books` - содержит информацию о написанных книгах.
+
+BookID |AuthorID|	BookName
+|:---:|:---:|:---:|
+1|3	|Modern Operating System
+2|1	|Thinking in Java
+3|3	|Computer Architecture
+4| NULL	|Programming in Scala
+
+__Задание__. Вывести информацию о написанных авторами книгах. В результат должны войти и книги без авторов.
+```sql
+SELECT Authors.*, Books.BookID, Books.BookName
+FROM Authors
+RIGHT JOIN Books
+ON Authors.AuthorID = Books.AuthorID
+```
+Результат :
+
+Authors.AuthorID	|Authors.AuthorName|	Books.BookID	|Books.BookName
+|:---:|:---:|:---:|:---:|
+3|	Andrew Tanenbaum|	3	|Modern Operating System
+1	|Bruce Eckel	|1	|Thinking in Java
+3|	Andrew Tanenbaum	|3	|Computer Architecture
+NULL|	NULL|	4	|Programming in Scala
+
+Как видим из результата, `RIGHT JOIN` помог нам достать все связанные записи таблиц, а также остальные записи правой таблицы, сконкатенированные со значениями `NULL`.
 
 [к оглавлению](#SQL)
 
