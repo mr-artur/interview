@@ -8,9 +8,21 @@
     + [Какой тип драйвера выбрать?](#Какой-тип-драйвера-выбрать?)
 + [`Connection`](#Connection)
     + [Регистрация драйвера](#Регистрация-драйвера)
-    + [Передача-информации-о-БД](#Передача-информации-о-БД)
-    + [Создание-соединения](#Создание-соединения)
-    + [Закрытие-соединения](#Закрытие-соединения)
+    + [Передача информации о БД](#Передача-информации-о-БД)
+    + [Создание соединения](#Создание-соединения)
+    + [Закрытие соединения](#Закрытие-соединения)
++ [Утверждения (Statements)](#Утверждения-Statements)
+    + [`Statement`](#Statement)
+        + [Создание экземпляра `Statement`](#Создание-экземпляра-Statement)
+        + [Методы `Statement`](#Методы-Statement)
+        + [Закрытие экземпляра `Statement`](#Закрытие-экземпляра-Statement)
+    + [`PreparedStatement`](#PreparedStatement)
+        + [Создание экземпляра `PreparedStatement`](#Создание-экземпляра-PreparedStatement)
+        + [Методы `PreparedStatement`](#Методы-PreparedStatement-)
+        + [Закрытие экземпляра `PreparedStatement`](#Закрытие-экземпляра-PreparedStatement)
+    + [`CallableStatement`](#CallableStatement)
+        + [Создание экземпляра `CallableStatement`](#Создание-экземпляра-CallableStatement)
+        + [Закрытие экземпляра `CallableStatement`](#Закрытие-экземпляра-CallableStatement)    
 
 ## Что такое _«JDBC»_?
 + _JDBC_ (Java Database Connectivity) - это стандартный API для работы с разными базами данных в языке Java.
@@ -185,5 +197,180 @@ try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD
     ...
 }
 ```
+
+[к оглавлению](#JDBC)
+
+## Утверждения (Statements)
+Утверждения - это интерфейсы, которые помогают нам взаимодействовать с БД и реализуются каждым драйвером.
+
+Их существует `3` :
++ `Statement` - интерфейс, который используется для доступа к БД в общих целях. Он крайне полезен, когда мы используем статические SQL - выражения во время работы программы. Этот интерфейс не принимает никаких параметров.
++ `PreparedStatement` - интерфейс, который используется в случае, когда мы планируем использовать выражения SQL множество раз. Он принимает параметры во время работы программы.
++ `CallableStatement` - интерфейс, который позволяет нам получить доступ к различным процедурам БД. Он также принимает значения во время работы программы.
+
+[к оглавлению](#JDBC)
+
+## `Statement`
++ `Statement` - это интерфейс, который используется для проведения операций с БД. Он является самым простым среди трех разных стейтментов, а также является parent-классом для `PreparedStatement` (тот в свою очередь parent для `CallableStatement`).
++ `Statement` обычно используется для работы со статическими SQL - запросами, которые не рассчитаны на переиспользование.
+
+[к оглавлению](#JDBC)
+
+### Создание экземпляра `Statement`
+Прежде, чем мы сможем использовать `Statement`, нам необходимо получить его экземпляр. Для этого используется метод `Connection.createStatement()`.
+
+В коде создание `Statement` выглядит следующим образом :
+```java
+try (Statement statement = connection.createStatement()){
+    ...
+} catch (SQLException e) {
+    e.printStackTrace();
+}
+```
+
+[к оглавлению](#JDBC)
+
+### Методы `Statement`
+После создания экземпляра `Statement` мы можем его использовать для выполнения SQL-запросов.
+
+Для этой цели интерфейс `Statement` имеет три метода, которые реализуются каждой конкретной реализации JDBC драйвера :
++ `execute(String sql) -> boolean` - используется для любых SQL-запросов и возвращает `true`, если команда может вернуть набор строк (`SELECT`) и `false` для остальных операторов.
++ `executeUpdate(String sql) -> int` - выполняет такие SQL-команды, как `INSERT`, `UPDATE`, `DELETE`, `CREATE TABLE`, `DROP TABLE`. В качестве результата вовращает количество строк, затронутых операцией (измененных, добавленных, удаленных и т.п.).
++ `executeQuery(String sql) -> ResultSet` - выполняет SQL-команду `SELECT`. Возвращает объект `ResultSet`, в котором содержатся результаты запроса.
+
+[к оглавлению](#JDBC)
+
+### Закрытие экземпляра `Statement`
+Экземпляр `Statement` обычно закрывается вместо с `Connection`, из которого его достали, для этого используется в старом варианте с `finally` - вызов метода `statement.close()`, а в новом - это создание его в блоке ресурсов конструкции `try-with-resources` :
+
+```java
+Class.forName(JDBC_DRIVER);
+Connection connection = DriverManager.getConnection(DATABASE_URL, USER, PASSWORD);
+
+try (Statement statement = connection.createStatement()){
+    ...
+} catch (SQLException e) {
+    e.printStackTrace();
+}
+```
+После выполнения блока `try-catch` объект `statement` будет автоматически закрыт, так как он имплементирует `AutoCloseable`.
+
+[к оглавлению](#JDBC)
+
+## `PreparedStatement`
++ `PreparedStatement` - это интерфейс утверждения, который используется когда мы планируем переиспользовать SQL-команду множество раз. В этом ему помогает возможность динамического подставления параметров в запрос.
++ Интерфейс `PreparedStatement` наследует интерфейс `Statement`, что дает ему определенные преимущества перед обычным `Statement`. В частности, мы получаем большую гибкость при работе с динамическими аргументами.
++ `PreparedStatement` является parent-классом для `CallableStatement`.
+
+[к оглавлению](#JDBC)
+
+### Создание экземпляра `PreparedStatement`
+Создание экземпляра `PreparedStatement` :
+```java
+String SQL = "Update developers SET salary WHERE specialty = ?";
+
+try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+    ...
+} catch (SQLException e){
+    e.printStackTrace();
+}
+```
+Все параметры, отмеченные символом `?`, называются маркерами параметра. Это означает, что они должны быть переданы через параметры метода. 
+
+Каждый параметр ссылается на свой порядковый номер в сигнатуре метода. То есть, первый маркер находится на первой позиции, второй - на второй и т.д. То есть, отсчет, в отличии от массивов, тут идет с единицы. Это связано с особенностями реляционной модели, на которой и основана работа реляционных БД.
+
+[к оглавлению](#JDBC)
+
+### Методы `PreparedStatement`
+`PreparedStatement` имеет все те же `3` метода, что и у родителя - `Statement`, только немного измененные внутри : 
++ `execute(String sql) -> boolean`
++ `executeUpdate(String sql) -> int`
++ `executeQuery(String sql) -> ResultSet`
+
+Также тут добавляются новые методы для динамической подстановки значений по маркерам в SQL. Вот часть из них :
++ `setString`
++ `setInt`
++ `setBigDecimal`
++ `setBoolean`
++ `setDate`
++ `setDouble`
++ `setFloat`
++ `setLong`
++ `setNull`
++ `setTime`
+
+Все они принимают первым параметром номер маркера, начиная с `1`, в который следует подставить значения, а вторым - само значение.
+
+[к оглавлению](#JDBC)
+
+### Закрытие экземпляра `PreparedStatement`
+`Prepared` является реализацией `AutoCloseable`, а поэтому, как и его parent - `Statement`, может закрываться двумя способами : первый - по старинке, через `finally`, где вызывается метод `preparedStatement.close()`, а второй - современный - автоматическое закрытие с `try-with-resources` :
+```java
+String SQL = "Update developers SET salary WHERE specialty = ?";
+
+try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+   ...
+} catch (SQLException e) {
+    e.printStackTrace();
+} 
+```
+После данного блока `try-catch` объект `preparedStatement` будет автоматически закрыт.
+
+[к оглавлению](#JDBC)
+
+## `CallableStatement`
++ `CallableStatement` используется для выполнения процедур непосредственно в самой БД.
++ `CallableStatement` расширяет интерфейс `PreparedStatement`.
++ Существует три типа параметров - IN, OUT, INOUT. `PreparedStatement` использует только IN, тогда как `CallableStatement` использует все три. Что же это за параметры :
+    + IN - параметр, значение которого известно в момент создания запроса. Мы можем его назначить с помощью метода `setXXX()`.
+    + OUT - параметр, значение которого возвращается SQL-запросом. Мы получаем значения из OUT с помощью метода типа `getXXX()`.
+    + INOUT - параметр, который использует входные и выходные значения. Мы можем как назначит его значение с помощью метода `setXXX()`, так и получить его значение с помощью `getXXX()`.
+
+[к оглавлению](#JDBC)
+
+### Создание экземпляра `CallableStatement`
+Создадим процедуру в MySQL :
+```sql
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `developers`.`getDeveloperName` $$
+CREATE PROCEDURE PROSELYTE_TUTORIALS.`getDeveloperName`
+(IN DEVELOPER_ID INT, OUT DEVELOPER_NAME VARCHAR(50))
+BEGIN
+SELECT first INTO DEVELOPER_NAME
+FROM developers
+WHERE id = DEVELOPER_ID;
+
+END $$
+
+DELIMITER ;
+```
+В коде создание экземпляра будет выглядеть следующим образом :
+```java
+String SQL = "{call getDeveloperName (?, ?)}";
+
+try (CallableStatement callableStatement = connection.prepareCall(SQL)) {
+    ...
+}
+```
+Здесь строка представляет собой процедуру с параметрами.
+
+Схожим образом с `PreparedStatement`, мы должны установить параметры и для данного стейтмента.
+
+Особенности использования `CallableStatement` :
++ Когда мы используем параметры типа OUT и INOUT, нам необходимо задействовать дополнительный метод `registerOutParameter()`. Этот метод устанавливает тип данных JDBC в тип данных процедуры.
++ После того, как мы вызвали процедуру, мы получаем значение из параметра OUT с помощью соответствующего метода `getXXX()`. Этот метод преобразует полученное значение из типа данных SQL в тип данных Java/.
+
+[к оглавлению](#JDBC)
+
+### Закрытие экземпляра `CallableStatement`
+`CallableStatement` реализует `AutoCloseable`, поэтому его эклемпляр можно закрыть либо с помощью `callableStatement.close()`, либо автоматически в `try-with-resources` :
+```sql
+String SQL = "{call getDeveloperName (?, ?)}";
+
+try (CallableStatement callableStatement = connection.prepareCall(SQL)) {
+    ...
+}
+```
+После окончания блока `try-with-resources` объект `callableStatement` автоматически будет закрыт.
 
 [к оглавлению](#JDBC)
