@@ -23,6 +23,11 @@
     + [`CallableStatement`](#CallableStatement)
         + [Создание экземпляра `CallableStatement`](#Создание-экземпляра-CallableStatement)
         + [Закрытие экземпляра `CallableStatement`](#Закрытие-экземпляра-CallableStatement)    
++ [`ResultSet`](#ResultSet)
+    + [Конфигурация `ResultSet`](#Конфигурация-ResultSet)
+    + [Пример конфигурации `ResultSet`](#Пример-конфигурации-ResultSet)
+    + [Методы `ResultSet`](#Методы-ResultSet)
+    + [Пример получения данных из `ResultSet`](#Пример-получения-данных-из-ResultSet)
 
 ## Что такое _«JDBC»_?
 + _JDBC_ (Java Database Connectivity) - это стандартный API для работы с разными базами данных в языке Java.
@@ -213,6 +218,7 @@ try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD
 ## `Statement`
 + `Statement` - это интерфейс, который используется для проведения операций с БД. Он является самым простым среди трех разных стейтментов, а также является parent-классом для `PreparedStatement` (тот в свою очередь parent для `CallableStatement`).
 + `Statement` обычно используется для работы со статическими SQL - запросами, которые не рассчитаны на переиспользование.
++ Объект `Statement` получается с помощью вызова метода `connection.getStatement()`.
 
 [к оглавлению](#JDBC)
 
@@ -261,6 +267,7 @@ try (Statement statement = connection.createStatement()){
 + `PreparedStatement` - это интерфейс утверждения, который используется когда мы планируем переиспользовать SQL-команду множество раз. В этом ему помогает возможность динамического подставления параметров в запрос.
 + Интерфейс `PreparedStatement` наследует интерфейс `Statement`, что дает ему определенные преимущества перед обычным `Statement`. В частности, мы получаем большую гибкость при работе с динамическими аргументами.
 + `PreparedStatement` является parent-классом для `CallableStatement`.
++ Объект `PreparedStatement` получается с помощью вызова метода `connection.prepareStatement()`.
 
 [к оглавлению](#JDBC)
 
@@ -325,6 +332,7 @@ try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
     + IN - параметр, значение которого известно в момент создания запроса. Мы можем его назначить с помощью метода `setXXX()`.
     + OUT - параметр, значение которого возвращается SQL-запросом. Мы получаем значения из OUT с помощью метода типа `getXXX()`.
     + INOUT - параметр, который использует входные и выходные значения. Мы можем как назначит его значение с помощью метода `setXXX()`, так и получить его значение с помощью `getXXX()`.
++ Объект `CallableStatement` получается с помощью вызова метода `connection.prepareCall()`.
 
 [к оглавлению](#JDBC)
 
@@ -372,5 +380,87 @@ try (CallableStatement callableStatement = connection.prepareCall(SQL)) {
 }
 ```
 После окончания блока `try-with-resources` объект `callableStatement` автоматически будет закрыт.
+
+[к оглавлению](#JDBC)
+
+## `ResultSet`
++ `ResultSet` - это сущность, в виде которой возвращаются данные, полученные из БД.
++ Получается `ResultSet` с помощью запроса `SELECT` к БД.
++ в Java `ResultSet` - это интерфейс, который находится в пакете `java.sql`.
++ Каждый экземпляр `ResultSet` имеет указатель на текущую строку в полученном множестве.
+
+[к оглавлению](#JDBC)
+
+### Конфигурация `ResultSet`
+`ResultSet` позволяет задать один из трех типов :
++ `ResultSet.TYPE_FORWARD_ONLY` (стоит по умолчанию) - указатель движется только вперед по множеству полученных результатов.
++ `ResultSet.TYPE_SCROLL_INTENSIVE` - указатель может двигаться вперед и назад и не чувствителен к изменениям в БД, которые сделаны другим пользователям после того, как был создан данный `ResultSet`.
++ `ResultSet.TYPE_SCROLL_SENSITIVE` - указатель может двигаться вперед и назад и чувствителен к изменениям в БД, которые сделаны другим пользователем после получения данного `ResultSet`.
+
+Также можно сконфигурировать уровень доступа в `ResultSet` :
++ `ResultSet.CONCUR_READ_ONLY` (стоит по умолчанию) - создает экземпляр `ResultSet` только для чтения.
++ `ResultSet.CONCUR_UPDATABLE` - создает экземпляр `ResultSet`, который может менять данные.
+
+Сконфигурировать `ResultSet` можно в методах создания стейтментов :
++ `connection.createStatement()`
++ `connection.prepareStatement()`
++ `connection.prepareCall()`
+
+[к оглавлению](#JDBC)
+
+### Пример конфигурации `ResultSet`
+
+В коде создание экземпляра `ResultSet` с кастомными параметрами выглядит так :
+```java
+try (Statement statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+    ...
+} catch (SQLException e) {
+    e.printStackTrace()
+}
+```
+
+[к оглавлению](#JDBC)
+
+### Методы `ResultSet`
+Все методы интерфейса `ResultSet` можно разделить на `3` группы :
++ __Методы получения данных__ - эти методы используются для просмотра данных конкретной записи, на которую ссылается указатель. Основные их две группы - это методы, которые получают данные по номеру колонки, и методы, которые получают данные по названию колонки :
+    + `int getInt (int columnIndex) throws SQLException` - Возвращает номер текущего ряда с указанным индексом колонки. Индексы начинаются с 1. Т.е. первая – 1, вторая – 2 и т.д.
+    + `int getInt (String columnName) throws SQLException` - Возвращает целое число в текущем ряду с колонкой с именем, переданном в параметре columnName.
+    + и т.д. для остальных типов данных.
++ __Методы изменения данных__ - эти методы используются для изменения данных текущей записи. Эти изменения передаются в используемую БД :
+    + Мы можем изменять данные как по имени, так и по номеру колонки :
+        + `void updateString (int columnIndex, String s) throws SQLException` - Изменяет строку в указанной колонке.
+        + `void updateString (String columnName, String s) throws SQLException` - Изменяет строку в колонке с указанным именем.
+        + и т.д. для остальных типов данных.
+    + Мы можем также работать со строками в таблице БД :
+        + `void insertRow()` - Вставляет запись в таблицу БД. Может быть использован только в том случае, когда указатель ссылается на ряд для вставки.
+        + `void updateRow()` - Изменяет текущий ряд в таблице БД.
+        + `void deleteRow()` - Удаляет текущий ряд из таблицы БД.
++ __Методы навигации__ - эти методы используются для перемещения указателя :
+    + `void beforeFirst() throws SQLException` - Перемещает указатель на место перед первым рядом.
+    + `void afterLast() throws SQLException` - Перемещает указатель на место после крайнего ряда.
+    + `boolean first() throws SQLException` - Перемещает указатель на первый ряд.
+    + `boolean last() throws SQLException` - Перемещает указатель на крайний ряд.
+    + `boolean previous() throws SQLException` - Перемещает указатель на предыдущий ряд. Возвращает false, если предыдущий ряд находится за пределами множества результатов.
+    + `boolean next() throws SQLException` - Перемещает указатель на следующий ряд. Возвращает false, если следующий ряд находится за пределами множества результатов.
+    + `void absolute(int row) throws SQLException` - Перемещает указатель на указанный ряд.
+    + `void relative(int row) throws SQLException` - Перемещает указатель на указанное количество рядов от текущего
+    + `int getRow() throws SQLException` - Возвращает номер ряда, на который в данный момент указывает курсор.
+    + `void moveToInsertRow() throws SQLException` - Перемещает указатель на ряд в полученном множестве, который может быть использован для того, чтобы добавить новую запись в БД. Текущее положение указателя запоминается.
+    + `void moveToCurrentRow() throws SQLExcpetion` - Возвращает указатель обратно на текущий ряд в случае, если указатель ссылается на ряд, в который в данный момент добавляются данные.
+
+[к оглавлению](#JDBC)
+
+### Пример получения данных из `ResultSet`
+Для получения данных построчно из `ResultSet` обычно используется его метод `next()` в цикле `while` :
+```java
+ResultSet resultSet = statement.executeQuery(SQL);
+
+while (resultSet.next()) {
+    id = resultSet.getInt("id");
+    name = resultSet.getString("name");
+    specialty = resultSet.getString("specialty");
+    salary = resultSet.getInt("salary");
+```
 
 [к оглавлению](#JDBC)
