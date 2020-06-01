@@ -20,7 +20,8 @@
 + [`EntityManager`](#EntityManager)
     + [Методы `EntityManager`](#Методы-EntityManager)
 + [Состояния _Entity_ и переходы между ними](#Состояния-Entity-и-переходы-между-ними)
-   
++ [Аннотации JPA ](#Аннотации-JPA )   
+
 ## Что такое _«ORM»_?
 _ORM_ (Object-Relational Mapping) - это концепция, основанная на том, что объект можно представить как данные в базе днанных и наоброот. Данную концепцию воплощает спецификация _JPA_. 
 
@@ -282,4 +283,337 @@ SELECT * FROM Animal a WHERE TYPE(a) IN (Animal, Cat)
     + _removed_ => _database_
     
 [к оглавлению](#JPA)
+    
+## Аннотации JPA    
+Все нижеперечисленные аннотации находятся в пакете `javax.persistence` :
++ __Базовые аннотации__ :
+    + `@Entity` - указывает, что данный класс является сущностью.
+    ```java
+    @Entity
+    public class Cat implements Serializable {
+    ...
+    }
+    ```
+    + `@Table` - позволяет менять параметры таблицы, связанной с сущностью. Например, тут можно например задать уникальные столбцы таблицы или ее имя.
+    ```java
+    @Entity
+    @Table(name = "cat_table")
+    public class Cat implements Serializable {
+    ...
+    }
+    ```
+    + `@Column` - позволяет менять параметры колонки, например, имя.
+    ```java
+    @Entity
+    @Table(name = "cat_table")
+    public class Cat implements Serializable {
+     
+      @Column(name = "catName")
+      private String name;
+       
+    ...
+    }
+    ```
+    + `@Id` - указывает что данное поле является первичным ключом.
+    ```java
+    @Entity
+    @Table(name = "cat_table")
+    public class Cat implements Serializable {
+     
+      @Id
+      @Column(name = "id")
+      private int id;
+       
+    ...
+    }
+    ```
+    + `@GeneratedValue` - указывает, что даннное свойство будет создаваться автоматически согласно указанной стратегии.
+    ```java
+    @Entity
+    @Table(name = "cat_table")
+    public class Cat implements Serializable {
+     
+      @Id
+      @GeneratedValue(strategy = IDENTITY) //AUTO, SEQUENCE, TABLE
+      @Column(name = "id")
+      private int id;
+       
+    ...
+    }
+    ```
+    + `@Version` - помогает управлять версией в записи сущности. При изменении записи увеличится на `1`.
+    ```java
+    @Entity
+    @Table(name = "cat_table")
+    public class Cat implements Serializable {
+     
+      @Version
+      @Column(name = "version")
+      private int version;
+       
+    ...
+    }
+    ```
+    + `@OrderBy` - позволяет указать сортировку поля-коллекции.
+    ```java
+   @Entity
+   @Table(name = "cat_table")
+   public class Cat implements Serializable {
+    
+    @OrderBy("firstName asc")
+    private Set catsSet; 
+   ...
+   }
+    ```
+    + `@Transient` - указывает, что поле не нужно сохранять в БД. `static` и `final` поля всегда _transient_.
+    ```java
+    @Entity
+    @Table(name = "cat_table")
+    public class Cat implements Serializable {
+     
+     @Transient
+      public boolean isNew() {
+          return id == null;
+       }
+     
+    ...
+    }
+    ```
+    + `@Lob` - указание на большие объекты.
+    + `@PersistenceContext` - указывает на зависимость `EntityManager` в контейнере, помогает получить его _instance_.
+    ```java
+    @Service("jpaCatService")
+    @Repository
+    @Transactional
+    public class CatServiceImpl implements CatService {
+     
+    	@PersistenceContext
+    	private EntityManager em;
+    ...
+    }
+    ```
+    + `@Temporal` - указываем, чтобы обозначить, что работам с `java.util.Date` или `java.util.Calendar`. Нужно потому, что в БД время может сохраняться как `sql.Date`.
+    ```java
+    public class Cat implements Serializable {
+     
+      private java.util.Date birthDate; //in DB schema uses sql.Date in column BIRTH_DATE. 
+     
+      @Temporal(TemporalType.DATE)
+      @Column(name = "BIRTH_DATE")
+      public Date getBirthDate() {
+    	  return this.birthDate;
+      }
+    ...
+    }
+    ```
+    + `@Embeddable` и `@Embedded` - первая из них определяет класс, экземпляр которого хранится как неотъемлемая часть `Entity`. Вторая - для того чтобы указать, что поле является таким объектом.
+    ```java
+   @Embeddable 
+    public class Address {
+        protected String street;
+        protected String city;
+        protected String state;
+  
+        @Embedded 
+        protected Zipcode zipcode;
+    }
+    
+    @Embeddable 
+    public class Zipcode {
+        protected String zip;
+        protected String plusFour;
+    }
+    ```
+  
++ __Аннотации для связей__ :
+    + `@OneToOne` - применяется для обозначения связи один-к-одному. Имеет такие параметры (самые интересные) :
+        + `orphanRemoval` - позволяет удалить объекты-сироты.
+        + `mappedBy` - обратная связь для `@JoinColumn`. Внутри пишется название поля в связанной сущности, через которое идет связка с этой.
+        + `cascade` - свойства распространения действий с сущностью на связанные с ней сущности.
+    ```java
+    @Entity
+    @Table(name = "contactDetail")
+    public class ContactDetail implements Serializable {
+     
+      @Id
+      @Column(name = "id")
+      @GeneratedValue
+      private int id;
+       
+      @OneToOne
+      @MapsId
+      @JoinColumn(name = "contactId")
+      private Contact contact;
+       
+      ...
+    }
+     
+    @Entity
+    @Table(name = "contact")
+    public class Contact implements Serializable {
+     
+      @Id
+      @Column(name = "ID")
+      @GeneratedValue
+      private Integer id;
+     
+      @OneToOne(mappedBy = "contact", cascade = CascadeType.ALL)
+      private ContactDetail contactDetail;
+     
+      ....
+    }
+    ```
+    + `@ManyToOne` - указывает на связь многие-к-одному.
+    ```java
+    @Entity
+    @Table(name = "cat_table")
+    public class Cat implements Serializable {
+    ...
+    }
+    ```
+    + `@OneToMany` - указывает на связь один-ко-многим.
+    ```java
+    @Entity
+    @Table(name = "contact")
+    public class Contact implements Serializable {
+     
+    private Set<ContactTelDetail> contactTelDetails = new HashSet<ContactTelDetail>();
+    //...
+    	@OneToMany(mappedBy = "contact", cascade=CascadeType.ALL, orphanRemoval=true)
+    	public Set<ContactTelDetail> getContactTelDetails() {
+    		return this.contactTelDetails;
+    	}
+    ....
+    }
+    @Entity
+    @Table(name = "contact_tel_detail")
+    public class ContactTelDetail implements Serializable {
+     
+    private Contact contact;
+    //...
+            @ManyToOne
+            @JoinColumn(name = "CONTACT_ID")
+            public Contact getContact() {
+    	        return this.contact;
+    	}
+    }
+    ```
+    + `@ManyToMany` - указывает на связь многие-ко-многим
+    ```java
+    @Entity
+    @Table(name = "contact")
+    public class Contact implements Serializable {
+     
+    private Set<Hobby> hobbies = new HashSet<Hobby>();
+    //...
+    	@ManyToMany
+    	@JoinTable(name = "contact_hobby_detail", 
+    	      joinColumns = @JoinColumn(name = "CONTACT_ID"), 
+    	      inverseJoinColumns = @JoinColumn(name = "HOBBY_ID"))
+    	public Set<Hobby> getHobbies() {
+    		return this.hobbies;
+    	}
+    ....
+    }
+     
+    @Entity
+    @Table(name = "hobby")
+    public class Hobby implements Serializable {
+     
+    private Set<Contact> contacts = new HashSet<Contact>();
+    //...
+     
+           @ManyToMany
+           @JoinTable(name = "contact_hobby_detail", 
+    	      joinColumns = @JoinColumn(name = "HOBBY_ID"), 
+    	      inverseJoinColumns = @JoinColumn(name = "CONTACT_ID"))
+    	public Set<Contact> getContacts() {
+    		return this.contacts;
+    	}
+    }
+    ```
+    + `@PrimaryKeyJoinColumn` - главный ключ для ассоциированной сущности с таким же ключом.
+    + `@JoinColumn` - применяется для указание колонки, ссылающейся на внешний ключ другой `Entity`.
+    ```java
+    @Entity
+    public class Troop {
+        @OneToMany(mappedBy="troop")
+        public Set<Soldier> getSoldiers() {
+        ...
+    }
+     
+    @Entity
+    public class Soldier {
+        @ManyToOne
+        @JoinColumn(name="troop_fk")
+        public Troop getTroop() {
+        ...
+    }
+    ```
+    + `@JoinTable` - указывает на связь с помощью промежуточной таблицы.
+    + `@MapsId` - связывает поле с первичным ключом в другой `Entity`. Работает c `@Id`.
+    ```java
+    @Entity
+    @Table(name="student")
+    public class Student implements Serializable {
+    	
+    	@Id
+    	@Column(name="sl_id")
+    	private int slNum;
+    	
+    	@MapsId
+    	@OneToOne
+    	@JoinColumn(name = "std_id")
+    	private Person student;
+     
+    	@Column(name="location")
+    	private String location;
+    	public Student(int slNum,Person student, String location){
+    		this.slNum=slNum;
+    		this.student=student;
+    		this.location=location;
+    	}
+     
+     
+    @Entity
+    @Table(name="person")
+    public class Person implements Serializable {
+    	
+    	@Id
+    	@Column(name="p_id")
+    	private int id;
+     
+            @Column(name="first_name")
+    	private String firstName;
+    	
+    	@Column(name="last_name")
+    	private String lastName;
+    ..
+    }
+    ```
++ __Аннотации наследования__ :
+    + `@Inheritance` - аннотация, позволяющая задать параметры наследования, такие как стратегия, `discriminatorValue` и т.д.
+    + `@DiscriminatorColumn` - позволяет задать название колонки дескриминатора (Для стратегии наследования с одной таблицей на все сущности иерархии).
+    + `@DiscriminatorValue` - позволяет задать значение дескриминатора для данной сущности (Для стратегии наследования с одной таблицей для всех сущностей иерархии).
+    ```java
+    @Entity
+    @Table(name="EJB_PROJECT")
+    @Inheritance(strategy=JOINED)
+    @DiscriminatorColumn(name="PROJ_TYPE")
+    @DiscriminatorValue("P")
+    public class Project implements Serializable {
+    ...
+        @Id
+        @Column(name="PROJECT_ID", primaryKey=true)
+        public Integer getId() {
+            return id;
+        }
+    ...
+    }
+    ```
++ __Аннотации запросов__ :
+    + `@NamedQueries` - внутри нее указывается список именованных запросов.
+    + `@NamedQuery` - имя именованного запроса и сам запрос.
+    + `@SqlResultSetMapping` - указывается, куда будет собран результат.
+    + `@EntityResult` - указание сущности, в которой будет сконструирован результат.
     
