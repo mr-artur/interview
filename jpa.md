@@ -15,6 +15,11 @@
     + [Требования к _Embeddable_ классам в _JPA_](#Требования-к-Embeddable-классам-в-JPA)
 + [Типы связей между _Entity_](#Типы-связей-между-Entity)
 + [Типы _Fetch_ стратегии](#Типы-Fetch-стратегии)
++ [Mapped Superclass](#Mapped-Superclass)
++ [Стратегии наследования маппинга в JPA](#Стратегии-наследования-маппинга-в-JPA)
++ [`EntityManager`](#EntityManager)
+    + [Методы `EntityManager`](#Методы-EntityManager)
++ [Состояния _Entity_ и переходы между ними](#Состояния-Entity-и-переходы-между-ними)
    
 ## Что такое _«ORM»_?
 _ORM_ (Object-Relational Mapping) - это концепция, основанная на том, что объект можно представить как данные в базе днанных и наоброот. Данную концепцию воплощает спецификация _JPA_. 
@@ -183,3 +188,98 @@ SELECT * FROM Animal a WHERE TYPE(a) IN (Animal, Cat)
     + _Many-to-Many_
     
 [к оглавлению](#JPA)
+
+## Mapped Superclass
++ _Mapped Superclass_ - это класс, от которого наследуются _Entity_, он может содержать JPA аннотации, но однако сам такой класс не является _Entity_ и ему не обязательно выполнять требования для _Entity_ (Например, он может не содержать первичный ключ).
++ _Mapped Superclass_ не может использоваться в операциях _EntityManager_ или _Query_.
++ _Mapped Superclass_ должен быть отмечен специальной аннотацией `@MappedSuperclass` или описан в xml-файле.
+
+[к оглавлению](#JPA)
+
+## Стратегии наследования маппинга в JPA
+Стратегии наследования маппинга - это как JPA будет работать с классами-наследниками _Entity_.
+
+Стратегий наследования маппинга в JPA есть `3` :
+1. __Single table per hierarchy__. В этой стратегии `Entity` вместе со своими наследниками записываются в одну таблицу, а для различия типов вводиться специальная колонка `discriminator column`. Минусом такой стратегии является то, что в таблице будут присутствовать колонки абсолютно для каждого наследника, а значит, будет много пустых значений.
+2. __Joined subclass strategy__. В этой стратегии все общие поля предка сохраняются в одной таблице, и для каждого наследника создается своя таблица с уникальными для него полями. Минусом этой стратегии является потеря производительности для любых операций за счет объединения таблиц (`JOIN`).
+3. __Table per concrete class strategy__. В этой стратегии каждый отдельный класс-наследник имеет свою отдельную таблицу, то есть, данные записываются так, как будто суперкласса нету вовсе. Минусом этой стратегии является поддержка полиморизма и то, что для выборки значений всех классов иерархии потребуется много SQL-запросов.
+
+[к оглавлению](#JPA)
+
+## `EntityManager`
++ `EntityManager` - это интерфейс, который описывает API для всех основных операций над `Entity` и другими сущностями JPA.
++ По сути `EntityManager` является главным API для работы с JPA.
+
+[к оглавлению](#JPA)
+
+## Методы `EntityManager`
+Основные операции `EntityManager` делятся на `5` групп :
+1. Операции над `Entity` :
+    + `persist` - добавление _Entity_ под управление JPA
+    + `merge` - обновление
+    + `remove` - удаление
+    + `refresh` - обновление данных
+    + `detach` - удаление _Entity_ из управления JPA
+    + `lock` - блокирование _Entity_ для изменений в других `thread`
+2. Получение данных :
+    + `find` - поиск и получение _Entity_
+    + `createQuery` - создание JPQL-запроса
+    + `createNamedQuery` - создание переиспользуемого JQPL-запроса
+    + `createNativeQuery` - создание SQL-запроса
+    + `contains` - проверка, хранится ли _Entity_ в JPA
+    + `createNamedStoredProcedureQuery` - создание именнованого запроса-хранимой процедуры
+    + `createStoredProcedureQuery` - создание запроса-хранимой процедуры
+3. Получение других сущностей JPA :
+    + `getTransaction` - получение транзакции
+    + `getEntityManagerFactory` - получение фабрики, из которой можно достать `EntityManager`
+    + `getCriteriaBuilder` - получение билдера для построения критериев поиска
+    + `getMetamodel` - получение метаданных о каком-либо _Entity_
+    + `getDelegate` - возвращает провайдер для `EntityManager`
+4. Работа с `EntityGraph` :
+    + `createEntityGraph` - создание `EntityGraph`
+    + `getEntityGraph` - получение `EntityGraph`
+5. Общие операции над `EntityManager` или всеми _Entities_ :
+    + `close` - закрытие `EntityManager`
+    + `isOpen` - проверка, открыт ли `EntityManager`
+    + `getProperties` - возвращает свойства `EntityManager`
+    + `setProperty` - задает свойство `EntityManager`
+    + `clear` - очищает `persistence context`
+ 
+[к оглавлению](#JPA)
+
+## Состояния _Entity_ и переходы между ними
+![alt text](https://3.bp.blogspot.com/-oI9s7pkkXJs/Tnh0grho31I/AAAAAAAABFQ/-OIkW8ia5UQ/s1600/entity+states.png)
+
+Как видим, у каждой _Entity_ есть `4` состояния :
+1. _new_ - объект только создан и еще не управляется JPA и не сохранен в БД. Отсюда следует, что у него нет первичного ключа.
+2. _managed_ - объект управляется _JPA_, у него есть первичный ключ.
+3. _detached_ - объект уже не управляется _JPA_.
+4. _removed_ - объект управляется с помощью _JPA_, но будет удален после `commit`-а транзакции.
+
+Для перехода между состояниями _Entity_ используются следующие операции :
+1. `persist (Object entity) -> Object` :
+    + _new_ >> _managed_
+    + _removed_ => _managed_
+2. `merge (Object entity) -> Object` :
+    + _new_ => _managed_
+    + _detached_ => _managed_
+3. `remove (Object entity) -> void` :
+    + _managed_ => _removed_
+4. `refresh (Object entity) -> void ` :
+    + _managed_ => _managed_
+5. `detach (Object entity) -> void` :
+    + _managed_ => _detached_
+6. `find (Class entityClass, Object key) -> Object` :
+    + _database_ => _managed_
+7. `createQuery (String query).getResultList() -> List` :
+    + _database_ => _managed_
+7. `close() -> void` - меняет состояние всех _managed_ объектов на _detached_ :
+    + _managed_ => _detached_
+8. `clear() -> void` - меняет состояние всех _managed_ объектов на _detached_ :
+    + _managed_ => _detached_
+9. `flush() -> void` - сохраняет изменение во всех _managed_ объектах в БД, а также удаляет все _removed_ объекты :
+    + _managed_ => _database_
+    + _removed_ => _database_
+    
+[к оглавлению](#JPA)
+    
