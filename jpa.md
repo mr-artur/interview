@@ -21,6 +21,9 @@
     + [Методы `EntityManager`](#Методы-EntityManager)
 + [Состояния _Entity_ и переходы между ними](#Состояния-Entity-и-переходы-между-ними)
 + [Аннотации JPA ](#Аннотации-JPA )   
++ [Cascade Types в JPA](#Cascade-Types-в-JPA)
++ [`orphanRemoval`](#orphanRemoval)
++ [В чем отличие между `cascade=CascadeType.REMOVE` и `orphanRemoval=true`?](#В-чем-отличие-между-cascadeCascadeTypeREMOVE-и-orphanRemovaltrue)
 
 ## Что такое _«ORM»_?
 _ORM_ (Object-Relational Mapping) - это концепция, основанная на том, что объект можно представить как данные в базе днанных и наоброот. Данную концепцию воплощает спецификация _JPA_. 
@@ -617,3 +620,48 @@ SELECT * FROM Animal a WHERE TYPE(a) IN (Animal, Cat)
     + `@SqlResultSetMapping` - указывается, куда будет собран результат.
     + `@EntityResult` - указание сущности, в которой будет сконструирован результат.
     
+[к оглавлению](#JPA)
+
+## Cascade Types в JPA
+В JPA есть `6` видов Cascade типов. Все они представлены в `javax.persistence.CascadeType` :
++ `ALL` - распространяет все виды операций на чайлдов.
++ `PERSIST` - распространяет операцию `persist` на чайлдов.
++ `MERGE` - распространяет операцию `merge` на чайлдов.
++ `REMOVE` - распространяет операцию `remove` на чайлдов.
++ `REFRESH` - распространяет операцию `refresh` на чайлдов.
++ `DETACH` - распространяет операцию `detach` на чайлдов.
+
+Пример присвоение `CascadeType` в `parent` :
+```java
+@Entity
+class Employee {
+
+    @OneToOne(cascade=CascadeType.REMOVE)
+    private Address address;
+}
+```
+
+[к оглавлению](#JPA)
+
+## `orphanRemoval`
+_Orphan removal_ помогает нам в удалении объектов, на которых не осталось ссылающихся объектов в БД и _persistent_ контексте. 
+
+Пример : 
+```java
+@Entity
+class Employee {
+
+    @OneToOne(orphanRemoval=true)
+    private Address address;
+}
+```
+
+[к оглавлению](#JPA)
+
+## В чем отличие между `cascade=CascadeType.REMOVE` и `orphanRemoval=true`?
++ Разница в том, что `orphanRemoval` - это более агрессивный способ удаления зависимых объектов.
++ Все, что делает `CascadeType.REMOVE` - это просто каскадирует удаление _parent_ объекта на _child_ объекты. 
++ `orphanRemoval` же удаляет объект, как только на него не осталось ссылок из других объектов. 
++ Исходя из пунктов выше, в ситуации, когда мы в `parent` удалим ссылку на `child1`, или заменим ее на ссылку на другого `child2`, то в случае `CascadeType.REMOVE` с `child1` ничего не произойдет, а в случае с `orphanRemoval` он сразу же удалится.
+
+[к оглавлению](#JPA)
