@@ -24,13 +24,14 @@
 + [Состояния _Entity_ и переходы между ними](#Состояния-Entity-и-переходы-между-ними)
     + [Операция `persist` на _Entity_ в разных состояниях](#Операция-persist-на-Entity-в-разных-состояниях)
     + [Операция `merge` на _Entity_ в разных состояниях](#Операция-merge-на-Entity-в-разных-состояниях)
-    + [Операция `remove` на _Entity_ в разных состояниях](#Операция-remove-на-Entity-в-разных-состояниях)+ [Операция `persist` на _Entity_ в разных состояниях](#Операция-persist-на-Entity-в-разных-состояниях)
+    + [Операция `remove` на _Entity_ в разных состояниях](#Операция-remove-на-Entity-в-разных-состояниях)
     + [Операция `detach` на _Entity_ в разных состояниях](#Операция-detach-на-Entity-в-разных-состояниях)
     + [Операция `refresh` на _Entity_ в разных состояниях](#Операция-refresh-на-Entity-в-разных-состояниях)
 + [Аннотации JPA ](#Аннотации-JPA )   
 + [Cascade Types в JPA](#Cascade-Types-в-JPA)
 + [`orphanRemoval`](#orphanRemoval)
 + [В чем отличие между `cascade=CascadeType.REMOVE` и `orphanRemoval=true`?](#В-чем-отличие-между-cascadeCascadeTypeREMOVE-и-orphanRemovaltrue)
++ [Callback методы](#Callback-методы)
 
 ## Что такое _«ORM»_?
 _ORM_ (Object-Relational Mapping) - это технология программирования которая служит для преобразовывания данных и их обмена между реляционной базой данных и Java. Данную концепцию воплощает спецификация _JPA_. 
@@ -743,4 +744,21 @@ class Employee {
 + `orphanRemoval` же удаляет объект, как только на него не осталось ссылок из других объектов. 
 + Исходя из пунктов выше, в ситуации, когда мы в `parent` удалим ссылку на `child1`, или заменим ее на ссылку на другого `child2`, то в случае `CascadeType.REMOVE` с `child1` ничего не произойдет, а в случае с `orphanRemoval` он сразу же удалится.
 
+[к оглавлению](#JPA)
+
+## Callback методы
++ _Callback методы_ служат для вызова при определенных событиях в жизненном цикле `Entity`.
++ _Callback методы_ могут быть добавлены к :
+    + _Entity_ классу
+    + Mapped superclass - у
+    + Callback Listener классу, заданному аннотацией `@EntityListeners`.
++ Существует `7` callback аннотаций, которые навешиваются над callback методами :
+    + `@PrePersist`
+    + `@PostPersist`
+    + `@PreRemove`
+    + `@PostRemove`
+    + `@PreUpdate`
+    + `@PostUpdate`
+    + `@PostLoad`
+    
 [к оглавлению](#JPA)
