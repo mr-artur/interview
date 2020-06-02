@@ -8,6 +8,7 @@
     + [Какая разница между `openSession()` и `getCurrentSession()`?](#Какая-разница-между-openSession-и-getCurrentSession)
 + [`Session`](#Session) 
     + [Методы `Session`](#Методы-Session) 
+    + [Метод `session.flush()`](#Метод-sessionflush)
     + [В чем разница между `session.get()` и `session.load()`?](#В-чем-разница-между-sessionget-и-sessionload) 
     + [В чем разница между `session.save()`, `session.persist()` и `session.saveOrUpdate()`?](#В-чем-разница-между-sessionsave-sessionpersist-и-sessionsaveOrUpdate) 
     + [В чем разница между `session.merge()` и `session.replicate()`?](#В-чем-разница-между-sessionmerge-и-sessionreplicate) 
@@ -158,6 +159,22 @@ Hibernate является одним из самых используемых O
 + `isDirty () -> boolean` - проверяет, есть ли в данной сессии какие-то изменения, которые должны быть синхронизированы с БД.
 + `isConnected () -> boolean` - проверяет, подключена ли сессия в данный момент.
 
+[к оглавлению](#Hibernate)
+
+## Метод `session.flush()`
++ Метод `flush()` служит для того, чтобы синхронизировать изменения в _persistent store_ и базой данных.
++ Метод `flush()` как правило вызывается самим Hibernate и служит для того, чтобы заносить в базу данных накопившиеся изменения и таким образом позволяет сократить количество запросов к БД. Смысл в том, что Hibernate не вносит изменения в БД сразу, а накапливает запросы изменения данных и потом отправляет их в БД одним запросом.
++ Метод `flush()` вызывается в `3` - х случаях :
+    + При `commit` - е транзакции в Hibernate.
+    + До того, как выполняется запрос в БД (`flush` - атся те _dirty_ данные, которые участвуют в запросе).
+    + При явном вызове нами `entityManager.flush()` или `session.flush()`.
++ Порядок выполнения накопленных операций при `flush()` такой :
+    1. `INSERT`
+    2. `UPDATE`
+    3. `DELETE` элементов коллекций
+    4. `INSERT` элементов коллекций
+    5. `DELETE`
+    
 [к оглавлению](#Hibernate)
 
 ## В чем разница между `session.get()` и `session.load()`?
