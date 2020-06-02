@@ -302,7 +302,7 @@ SELECT * FROM Animal a WHERE TYPE(a) IN (Animal, Cat)
 
 Для перехода между состояниями _Entity_ используются следующие операции :
 1. `persist (Object entity) -> Object` :
-    + _new_ >> _managed_
+    + _new_ => _managed_
     + _removed_ => _managed_
 2. `merge (Object entity) -> Object` :
     + _new_ => _managed_
