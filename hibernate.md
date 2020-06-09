@@ -20,7 +20,7 @@
 + [Cascade Types в Hibernate](#Cascade-Types-в-Hibernate) 
 + [Какие паттерны применяются в Hibernate?](#Какие-паттерны-применяются-в-Hibernate) 
 + [Типы коллекций в Hibernate](#Типы-коллекций-в-Hibernate) 
-+ [Что лучше - _Sorted Collection_ или _Ordered_ Collection?](#Что-лучше-Sorted-Collection-или-Ordered-Collection) 
++ [Что лучше - _Sorted Collection_ или _Ordered_ Collection?](#что-лучше---sorted-collection-или-ordered-collection) 
 + [Кеширование в Hibernate](#Кеширование-в-Hibernate) 
     + [Типы стратегий кеширования](#Типы-стратегий-кеширования) 
 
